@@ -160,7 +160,7 @@ const ContainerList = () => {
             size="small"
             danger
             icon={<DeleteOutlined />}
-            onClick={() => setContainerToDelete(container)}
+            onClick={() => handleContainerAction(container.id, "delete")}
             loading={loadingStates[`delete-${container.id}`]}
           />
         </Tooltip>,
@@ -497,6 +497,8 @@ const ContainerList = () => {
       case "restart":
         restartMutation.mutate(containerId);
         break;
+      case "delete":
+        deleteMutation.mutate(containerId);
     }
   };
 
