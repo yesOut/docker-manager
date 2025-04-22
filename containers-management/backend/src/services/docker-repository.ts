@@ -27,7 +27,7 @@ export class DockerContainerRepository implements IContainerRepository {
             stderr: true,
             tail: 1000,
             timestamps: true,
-            follow: true,
+            follow: false,
             ...options,
         } as Docker.ContainerLogsOptions & { follow: true });
     }
