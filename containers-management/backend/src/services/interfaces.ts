@@ -1,0 +1,41 @@
+import Docker from "dockerode";
+
+export interface IContainer {
+    id: string;
+    name: string;
+    image: string;
+    state: string;
+    status: string;
+}
+
+export interface IContainerStats {
+    cpu: string;
+    memory: {
+        percent: string;
+        usage: string;
+        limit: string;
+    };
+}
+
+export interface ILogFormatter {
+    format(logs: Buffer): string;
+}
+
+export interface IContainerRepository {
+    listContainers(all?: boolean): Promise<IContainer[]>;
+    getStats(containerId: string): Promise<any>;
+    getLogs(containerId: string, options?: Docker.ContainerLogsOptions & { follow: true }): Promise<NodeJS.ReadableStream>;
+    getContainer(containerId: string): Docker.Container;
+}
+
+export interface IContainerService {
+    getContainers(): Promise<IContainer[]>;
+    getContainerStats(containerId: string): Promise<IContainerStats>;
+    getContainerLogs(containerId: string): Promise<string>;
+    executeCommand(containerId: string, command: IContainerCommand): Promise<void>;
+}
+
+export interface IContainerCommand {
+    execute(container: Docker.Container): Promise<void>;
+    readonly name: string;
+}

@@ -1,8 +1,7 @@
 import Docker from 'dockerode';
 
 export const docker = new Docker({ socketPath: '/var/run/docker.sock' });
-
-export async function getContainerDetails(containerId) {
+export async function getContainerDetails(containerId: string) {
   try {
     const container = docker.getContainer(containerId);
     const info = await container.inspect();
@@ -12,7 +11,13 @@ export async function getContainerDetails(containerId) {
       try {
         stats = await container.stats({ stream: false });
       } catch (error) {
-        console.error(`Error getting container stats: ${error.message}`);
+        if(error instanceof Error) {
+          console.error(`Error getting container stats: ${error.message}`);
+        }
+        else{
+          console.error(`Error getting container stats:`);
+        }
+
       }
     }
 
@@ -26,12 +31,16 @@ export async function getContainerDetails(containerId) {
       state: info.State.Running ? 'running' : 'exited'
     };
   } catch (error) {
-    console.error(`Error getting container details: ${error.message}`);
-    throw new Error(`Failed to get container details: ${error.message}`);
+    if(error instanceof Error) {
+      console.error(`Error getting container details: ${error.message}`);
+    }
+    if(error instanceof Error) {
+      throw new Error(`Failed to get container details: ${error.message}`);
+    }
   }
 }
 
-function calculateCPUPercentage(stats) {
+function calculateCPUPercentage(stats: Docker.ContainerStats) {
   try {
     const cpuDelta = stats.cpu_stats.cpu_usage.total_usage - stats.precpu_stats.cpu_usage.total_usage;
     const systemDelta = stats.cpu_stats.system_cpu_usage - stats.precpu_stats.system_cpu_usage;
@@ -42,7 +51,9 @@ function calculateCPUPercentage(stats) {
     }
     return 0;
   } catch (error) {
-    console.error(`Error calculating CPU percentage: ${error.message}`);
+    if(error instanceof Error) {
+      console.error(`Error calculating CPU percentage: ${error.message}`);
+    }
     return 0;
   }
 }
