@@ -1,41 +1,41 @@
-import { docker, getContainerDetails } from '../services/docker.js';
+import { docker, getContainerDetails } from '@/services/docker';
 
 const activeLogStreams = new Map();
 
-export function setupSocketHandlers(io) {
+export function setupSocketHandlers(io: { on: (arg0: string, arg1: (socket: any) => void) => void; }) {
   io.on('connection', (socket) => {
     console.log('Client connected');
 
-    // Send container updates every second
     const statsInterval = setInterval(async () => {
       try {
         const containers = await docker.listContainers({ all: true });
         const containerDetails = await Promise.all(
-          containers.map(async container => {
-            try {
-              const details = await getContainerDetails(container.Id);
-              return {
-                id: container.Id,
-                name: container.Names[0].replace('/', ''),
-                state: details.state,
-                stats: details.stats,
-                Created: container.Created,
-                Image: container.Image
-              };
-            } catch (error) {
-              console.error(`Error getting container details: ${error}`);
-              return null;
-            }
-          })
+            containers.map(async container => {
+              try {
+                const details = await getContainerDetails(container.Id);
+                if (!details) return null;
+                return {
+                  id: container.Id,
+                  name: container.Names[0].replace('/', ''),
+                  state: details.state,
+                  stats: details.stats,
+                  Created: container.Created,
+                  Image: container.Image
+                };
+              } catch (err) {
+                console.error(`Error getting details for container ${container.Id}:`, err);
+                return null;
+              }
+            })
         );
-        socket.emit('containers-update', containerDetails.filter(c => c !== null));
-      } catch (error) {
-        console.error('Error fetching containers:', error);
+      } catch (err) {
+        console.error('Error listing containers:', err);
       }
-    }, 1000);
+    }, 5000);
+
 
     // Handle log streaming
-    socket.on('subscribe-logs', async (containerId) => {
+    socket.on('subscribe-logs', async (containerId: string) => {
       try {
         if (activeLogStreams.has(containerId)) {
           activeLogStreams.get(containerId).destroy();
@@ -69,14 +69,22 @@ export function setupSocketHandlers(io) {
         });
       } catch (error) {
         console.error('Error setting up log stream:', error);
-        socket.emit('container-logs-error', {
-          containerId,
-          error: error.message
-        });
+        if(error instanceof Error){
+          socket.emit('container-logs-error', {
+            containerId,
+            error: error.message
+          });
+        }
+        else {
+          socket.emit('container-logs-error', {
+            error: "problem while setting up log stream",
+          })
+        }
+
       }
     });
 
-    socket.on('unsubscribe-logs', (containerId) => {
+    socket.on('unsubscribe-logs', (containerId: any) => {
       if (activeLogStreams.has(containerId)) {
         activeLogStreams.get(containerId).destroy();
         activeLogStreams.delete(containerId);
