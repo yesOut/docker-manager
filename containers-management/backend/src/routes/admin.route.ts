@@ -1,4 +1,3 @@
-// src/routes/admin.ts
 import { Router } from 'express';
 import { AdminController } from '@/controllers/admin';
 import { validationMiddleware } from '@/middlewares/validation';

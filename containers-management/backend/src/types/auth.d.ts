@@ -1,5 +1,7 @@
 export interface User {
     id: string;
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
     role: 'user' | 'admin';
@@ -29,16 +31,6 @@ declare global {
     }
 }
 
-export class User {
-    id: string;
-    email:string;
-    role: string;
-    createdAt:Date;
-}
-export class UserRole{
-    id: string;
-    role: 'user' | 'admin';
-}
 export interface IUserRepository {
     create(user: Omit<User, 'id'>): Promise<User>;
     findByEmail(email: string): Promise<User | null>;
