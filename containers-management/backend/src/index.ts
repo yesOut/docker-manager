@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import containerRoutes from "./routes/containers";
+import appRouter from "./routes";
 
 class AppConfig {
     private static readonly DEFAULT_PORT = 4200;
@@ -53,7 +54,7 @@ class Server {
 
     private applyRoutes(): void {
         this.app.get("/health", this.healthCheck);
-        this.app.use("/containers", containerRoutes);
+        this.app.use(appRouter)
         this.app.use(AppErrorHandler.handleError);
     }
 
