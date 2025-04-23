@@ -1,10 +1,10 @@
 import {body, checkSchema, param, validationResult} from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
-import { UserRole } from '@/types/auth';
 import { UserRepository } from '@/repositories/user-repository';
+import {UserModel} from '@/model/user.model'
 
 const userRepository = new UserRepository();
-
+const roles=['user','admin'];
 export const validationMiddleware = {
     validateRequest: (req: Request, res: Response, next: NextFunction): void => {
         const errors = validationResult(req);
@@ -15,7 +15,6 @@ export const validationMiddleware = {
         next();
     },
 
-    // Auth validations
     authValidation: {
         register: [
             body('email')
@@ -30,7 +29,7 @@ export const validationMiddleware = {
                 .withMessage('Passwords do not match'),
             body('role')
                 .optional()
-                .isIn(Object.values(UserRole))
+                .isIn(Object.values({roles}))
                 .withMessage('Invalid user role')
         ],
 
@@ -40,7 +39,6 @@ export const validationMiddleware = {
         ]
     },
 
-    // Container validations
     containerValidation: {
         idParam: [
             param('id')
@@ -59,11 +57,10 @@ export const validationMiddleware = {
         ]
     },
 
-    // Admin validations
     adminValidation: {
         userUpdate: [
             body('role')
-                .isIn(Object.values(UserRole))
+                .isIn(Object.values([roles]))
                 .withMessage('Invalid user role'),
             body('isActive')
                 .isBoolean()
@@ -72,12 +69,10 @@ export const validationMiddleware = {
     }
 };
 
-// Utility type for validation chains
 export type ValidationChain = Array<
     (req: Request, res: Response, next: NextFunction) => Promise<void>
 >;
 
-// Schema-based validation example (alternative approach)
 export const containerIdSchema = checkSchema({
     id: {
         in: ['params'],
