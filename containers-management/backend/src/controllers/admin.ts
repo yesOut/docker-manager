@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { UserRepository } from '@/repositories/user-repository';
 import { validationResult } from 'express-validator';
-import { User, UserRole } from '@/types/auth';
+import { User } from '@/types/auth';
 
 export class AdminController {
     constructor(private readonly userRepository: UserRepository) {}

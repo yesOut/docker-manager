@@ -17,6 +17,12 @@ export const validationMiddleware = {
 
     authValidation: {
         register: [
+            body('firstName')
+                .isLength({min:1})
+                .withMessage('Valid firstName is required'),
+            body('lastName')
+            .isLength({min:1})
+            .withMessage('Valid lastName is required'),
             body('email')
                 .isEmail()
                 .withMessage('Valid email is required')
