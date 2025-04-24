@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import containerRoutes from "./routes/containers";
 import appRouter from "./routes";
-
+import { getConfig} from '@/config/environment'
 class AppConfig {
     private static readonly DEFAULT_PORT = 4200;
     private static readonly ALLOWED_ORIGINS = [
@@ -11,7 +11,7 @@ class AppConfig {
     ];
 
     public static getPort(): number {
-        return Number(process.env.PORT) || AppConfig.DEFAULT_PORT;
+        return Number(getConfig().PORT) || AppConfig.DEFAULT_PORT;
     }
 
     public static getCorsOptions(): cors.CorsOptions {
