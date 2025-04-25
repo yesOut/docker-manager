@@ -1,6 +1,5 @@
 import { Progress, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import React from 'react';
 
 interface ResourceUsageProps {
   type: 'cpu' | 'memory';

@@ -1,5 +1,12 @@
 {
   "dependencies": {
-    "@ant-design/icons": "^6.0.0"
+    "@ant-design/icons": "^6.0.0",
+    "@tailwindcss/cli": "^4.1.4",
+    "tailwindcss": "^4.1.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "typescript": "^5.8.3"
   }
 }

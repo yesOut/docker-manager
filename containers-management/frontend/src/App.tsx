@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Layout, App as AntdApp } from 'antd'; // Import Antd's App component
 import NavBar from './components/NavBar';
 import ContainerList from './components/ContainerList';

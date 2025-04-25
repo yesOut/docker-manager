@@ -1,5 +1,5 @@
 // src/components/NavBar.tsx
-import React from 'react';
+import * as React from 'react';
 import { Layout, Menu, Typography, Space } from 'antd';
 import { ContainerOutlined } from '@ant-design/icons';
 import { NavigationProps } from '../types/navigation';
