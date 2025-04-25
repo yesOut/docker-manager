@@ -47,7 +47,7 @@ export class AuthService {
                 role: user.role
             },
             this.jwtSecret,
-            { expiresIn: '1h' }
+            { expiresIn: '0.2h' }
         );
     }
 }

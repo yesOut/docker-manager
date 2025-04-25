@@ -2,7 +2,8 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import containerRoutes from "./routes/containers";
 import appRouter from "./routes";
-import { getConfig} from '@/config/environment'
+import { config} from '@/config/environment'
+import {database} from "@/config/db.config";
 class AppConfig {
     private static readonly DEFAULT_PORT = 4200;
     private static readonly ALLOWED_ORIGINS = [
@@ -11,7 +12,7 @@ class AppConfig {
     ];
 
     public static getPort(): number {
-        return Number(getConfig().PORT) || AppConfig.DEFAULT_PORT;
+        return Number(config.port) || AppConfig.DEFAULT_PORT;
     }
 
     public static getCorsOptions(): cors.CorsOptions {
@@ -39,11 +40,13 @@ class AppErrorHandler {
 class Server {
     private app = express();
     private port = AppConfig.getPort();
+    private dbMongo = database;
 
     public initialize(): void {
         this.applyMiddlewares();
         this.applyRoutes();
         this.start();
+        this.dbMongo.connect();
     }
 
     private applyMiddlewares(): void {
@@ -69,4 +72,10 @@ class Server {
     }
 }
 
-new Server().initialize();
+
+
+try {
+    new Server().initialize();
+}catch(err) {
+    console.log(err);
+}
