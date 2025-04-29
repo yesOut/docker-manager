@@ -19,13 +19,14 @@ export const Footer: React.FC = () => {
                         className="w-10 h-10 hover:opacity-80 transition-opacity"
                     />
                 </Link>
+
                 <nav className="w-full md:w-auto">
                     <ul className="flex flex-wrap justify-center gap-x-8">
                         {navItems.map((item) => (
                             <li key={item.name} className="mx-6">
                                 <Link
                                     to={item.path}
-                                    className="text-gray-600 hover:text-blue-950 transition-colors text-sm md:text-base"
+                                    className="text-gray-400 hover:text-blue-800 transition-colors text-sm md:text-base"
                                 >
                                     {item.name}
                                 </Link>
@@ -35,10 +36,15 @@ export const Footer: React.FC = () => {
                 </nav>
             </div>
 
-            <hr className="my-6 border-gray-200" />
-            <p className="text-center text-gray-600 text-sm">
-                &copy; {new Date().getFullYear()} Docker Management
-            </p>
+            <hr className="my-4 border-gray-200" />
+            <div className="text-center">
+                <p className="text-gray-500 text-sm md:text-base">
+                    Docker Management.
+                </p>
+                <p className="text-gray-500 text-sm mt-2">
+                    © 2025 All rights reserved.
+                </p>
+            </div>
         </footer>
     );
 };
