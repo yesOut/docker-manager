@@ -24,15 +24,13 @@ import {
   AppstoreOutlined,
   BarsOutlined,
 } from "@ant-design/icons";
-import "./ContainerList.css";
+import "../assets/ContainerList.css";
 import { useQuery, useMutation, useQueryClient, QueryFunction } from "@tanstack/react-query";
 
-// Configure axios defaults
 axios.defaults.baseURL = "http://localhost:4200";
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.withCredentials = true;
 
-// Type definitions
 interface Container {
   id: string;
   name: string;
@@ -67,7 +65,7 @@ interface LoadingStates {
   [key: string]: boolean;
 }
 
-// API functions with types
+
 const api = {
   getContainers: (): Promise<Container[]> =>
     axios.get("/containers").then((res) => res.data),
@@ -92,14 +90,12 @@ const ContainerList: React.FC = () => {
   const logContainerRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
-  // Queries
   const { data: containers = [], isLoading } = useQuery<Container[]>({
     queryKey: ["containers"],
     queryFn: api.getContainers,
     refetchInterval: 10000,
   });
 
-  // Get stats for all running containers
   const { data: allContainerStats = {} } = useQuery<Record<string, ContainerStats | null>>({
     queryKey: ["container-stats"],
     queryFn: async () => {
@@ -395,7 +391,6 @@ const ContainerList: React.FC = () => {
     },
   ];
 
-  // Mutations
   const startMutation = useMutation({
     mutationFn: api.startContainer,
     onMutate: (containerId: string) => {
