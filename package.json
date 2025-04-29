@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
+    "@material-tailwind/react": "^2.1.10",
     "@tailwindcss/cli": "^4.1.4",
     "tailwindcss": "^4.1.4"
   },
