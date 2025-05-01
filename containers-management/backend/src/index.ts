@@ -1,14 +1,16 @@
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import containerRoutes from "./routes/containers";
-import appRouter from "./routes";
-import { config} from '@/config/environment'
-import {database} from "@/config/db.config";
+import userRoutes from "@/routes/user.routes";
+import { config } from "@/config/environment";
+import { database } from "@/config/db.config";
+import {UserModel} from "@/model/user.model";
+
 class AppConfig {
     private static readonly DEFAULT_PORT = 4200;
     private static readonly ALLOWED_ORIGINS = [
         "http://localhost:5173",
-        "http://127.0.0.1:5173"
+        "http://127.0.0.1:5173",
     ];
 
     public static getPort(): number {
@@ -20,7 +22,7 @@ class AppConfig {
             origin: AppConfig.ALLOWED_ORIGINS,
             methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             allowedHeaders: ["Content-Type"],
-            credentials: true
+            credentials: true,
         };
     }
 }
@@ -32,7 +34,7 @@ class AppErrorHandler {
         res: Response,
         next: NextFunction
     ): void {
-        console.error("Error:", err.stack);
+        console.error(err.stack);
         res.status(500).json({ error: err.message || "Something went wrong!" });
     }
 }
@@ -40,13 +42,13 @@ class AppErrorHandler {
 class Server {
     private app = express();
     private port = AppConfig.getPort();
-    private dbMongo = database;
+    private db = database;
 
-    public initialize(): void {
+    public async initialize(): Promise<void> {
+        await this.db.connect();
         this.applyMiddlewares();
         this.applyRoutes();
         this.start();
-        this.dbMongo.connect();
     }
 
     private applyMiddlewares(): void {
@@ -56,13 +58,16 @@ class Server {
     }
 
     private applyRoutes(): void {
-        this.app.get("/health", this.healthCheck);
-        this.app.use(appRouter)
-        this.app.use(AppErrorHandler.handleError);
-    }
+        this.app.get("/health", (req: Request, res: Response) => {
+            res.json({ status: "ok" });
+        });
+        console.log('hello world!');
+        console.log(UserModel)
+        this.app.use("/", userRoutes);
+        this.app.use("/containers", containerRoutes);
 
-    private healthCheck(req: Request, res: Response): void {
-        res.json({ status: "ok" });
+
+        this.app.use(AppErrorHandler.handleError);
     }
 
     private start(): void {
@@ -72,10 +77,11 @@ class Server {
     }
 }
 
-
-
-try {
-    new Server().initialize();
-}catch(err) {
-    console.log(err);
-}
+(async () => {
+    try {
+        await new Server().initialize();
+    } catch (err) {
+        console.error(err);
+        process.exit(1);
+    }
+})();

@@ -1,6 +1,6 @@
-import { MongoDBDatabase } from '@/connexions/mongo.db';
+import { MongooseDatabase } from '@/connexions/mongo.db';
 import { IDatabase } from '@/interfaces/database';
 
-const database: IDatabase = new MongoDBDatabase();
+const database: IDatabase = new MongooseDatabase();
 
 export { database };

@@ -1,49 +1,20 @@
-    import { MongoClient, Db, Collection, Document } from 'mongodb';
-    import { IDatabase, IRepository } from '@/interfaces/database';
-    import { BaseRepository } from '@/repositories/base.repository';
-    import { Logger } from '@/utils/logger';
+import mongoose, { Model, Document } from 'mongoose';
+import { IDatabase, IRepository } from '@/interfaces/database';
+import { BaseRepository } from '@/repositories/base.repository';
 
-    export interface IEntity extends Document {
-        id: string;
+export class MongooseDatabase implements IDatabase {
+    async connect(): Promise<void> {
+        const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/db';
+        await mongoose.connect(uri);
+        console.log('✅ MongoDB connected (via Mongoose)');
     }
 
-    export class MongoDBDatabase implements IDatabase {
-        private client: MongoClient;
-        private db: Db | null = null;
-        private logger = new Logger('MongoDB');
-
-        constructor() {
-            const uri = process.env.DB_USER && process.env.DB_PASSWORD
-                ? `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}`
-                : `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}`;
-            try {
-                this.client = new MongoClient(uri);
-            }catch(err) {
-                throw new Error(`MongoDB connection error: ${err}`);
-            }
-        }
-
-        async connect(): Promise<void> {
-            try {
-                await this.client.connect();
-                this.db = this.client.db(process.env.DB_NAME);
-                this.logger.info('Connected to MongoDB');
-            } catch (error) {
-                this.logger.error('Connection failed:', error);
-                throw error;
-            }
-        }
-
-        async disconnect(): Promise<void> {
-            await this.client.close();
-            this.logger.info('Disconnected from MongoDB');
-        }
-
-        getRepository<T extends IEntity>(entity: new () => T): IRepository<T> {
-            if (!this.db) throw new Error('Database not initialized');
-            const collectionName = entity.name.toLowerCase() + 's';
-
-            const collection = this.db.collection(collectionName);
-            return new BaseRepository<T>(collection);
-        }
+    async disconnect(): Promise<void> {
+        await mongoose.disconnect();
+        console.log('🔌 MongoDB disconnected');
     }
+
+    getRepository<T extends Document>(model: Model<T>): IRepository<T> {
+        return new BaseRepository<T>(model);
+    }
+}

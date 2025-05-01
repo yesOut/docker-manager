@@ -1,3 +1,4 @@
+/*
 import { Request, Response } from 'express';
 import { UserRepository } from '@/repositories/user-repository';
 import { validationResult } from 'express-validator';
@@ -52,4 +53,4 @@ export class AdminController {
         const message = error instanceof Error ? error.message : defaultMessage;
         res.status(500).json({ success: false, error: message });
     }
-}
+}*/
