@@ -1,21 +1,18 @@
-import {User} from '@/types/auth'
+import { Schema, model } from 'mongoose';
 
-export class UserModel implements User {
-    id: string;
-    firstName: string;
-    lastName: string;
+export interface IUser {
+    username: string;
     email: string;
     password: string;
-    role: 'user' | 'admin';
-    createdAt: Date;
-
-    constructor(user: User) {
-        this.id = user.id;
-        this.firstName = user.firstName;
-        this.lastName = user.lastName;
-        this.email = user.email;
-        this.password = user.password;
-        this.role = user.role;
-        this.createdAt = user.createdAt;
-    }
 }
+
+const UserSchema = new Schema<IUser>(
+    {
+        username: { type: String, required: true, unique: true },
+        email:    { type: String, required: true, unique: true },
+        password: { type: String, required: true }
+    },
+    { timestamps: true }
+);
+
+export const UserModel = model<IUser>('User', UserSchema);
