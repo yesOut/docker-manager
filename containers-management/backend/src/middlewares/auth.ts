@@ -1,57 +1,78 @@
-// src/middlewares/user.controller.ts
 import { Request, Response, NextFunction } from 'express';
 import { AuthService } from '@/services/auth';
 import { AuthPayload } from '@/types/auth';
+import jwt from "jsonwebtoken";
+
+declare module 'express' {
+    interface Request {
+        user?: AuthPayload;
+    }
+}
 
 export class AuthMiddleware {
     constructor(private readonly authService: AuthService) {}
 
-    // ensure the return type is Promise<void>
-    authenticate = async (
+    public authenticate = async (
         req: Request,
         res: Response,
         next: NextFunction
     ): Promise<void> => {
         try {
             const authHeader = req.headers.authorization;
-            if (!authHeader?.startsWith('Bearer ')) {
-                throw new Error('Missing or invalid authorization header');
+            if(!authHeader){
+                res.status(401).json({ error: 'Missing or invalid Authorization header' });
+                return ;
             }
-
-            const token = authHeader.slice(7); // drop "Bearer "
-            const payload: AuthPayload = await this.authService.verifyToken(token);
-
-            // attach user to req
-            req.user = {
-                userId: payload.userId,
-                email:  payload.email,
-                role:   payload.role,
-            };
-
+            if (!authHeader.startsWith('Bearer ')) {
+                res.status(401).json({ error: 'Missing or invalid Authorization header' });
+                return ;
+            }
+            else{
+                const token = authHeader.slice(7);
+                const payload: AuthPayload =  this.authService.verifyToken(token);
+                req.user = {
+                    userId: payload.userId,
+                    email: payload.email,
+                    role: payload.role,
+                };
+            }
             next();
-            return; // explicit void
-        } catch (err) {
-            const message =
-                err instanceof Error ? err.message : 'Authentication failed';
-            res.status(401).json({ success: false, error: message });
-            return; // explicit void
+            return ;
+        } catch (err: any) {
+            const errorMessage = err.message || 'Authentication failed';
+            res.status(401).json({ error: errorMessage });
+            return ;
         }
     };
-}
-
-// factory function returns a RequestHandler
-export const createAuthMiddleware = (authService: AuthService) =>
-    new AuthMiddleware(authService).authenticate;
-
-// a plain middleware that also must return void
-export const adminMiddleware = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-): void => {
-    if (req.user?.role !== 'admin') {
-        res.status(403).json({ success: false, message: 'Access denied' });
-        return; // void
+    public authorize= async(req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const authHeader = req.headers.authorization;
+            if(!authHeader){
+                res.status(401).json({ error: 'Missing or invalid Authorization header' });
+                return ;
+            }
+            if (!authHeader.startsWith('Bearer ')) {
+                res.status(401).json({ error: 'Missing or invalid Authorization header' });
+                return ;
+            }
+            const token = authHeader.slice(7);
+            const payload: AuthPayload =  this.authService.verifyToken(token);
+            req.user = {
+                userId: payload.userId,
+                email: payload.email,
+                role: payload.role,
+            };
+            if (payload.role !== 'admin') {
+                res.status(403).json({ error: 'Access denied: Admins only' });
+                return;
+            }
+            next();
+            return ;
+        }
+        catch (err:any) {
+            const errorMessage = err.message || 'FORBIDDEN';
+            res.status(403).json({ error: errorMessage });
+            return ;
+        }
     }
-    next();
-};
+}

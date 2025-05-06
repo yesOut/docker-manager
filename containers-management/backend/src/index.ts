@@ -5,6 +5,7 @@ import userRoutes from "@/routes/user.routes";
 import { config } from "@/config/environment";
 import { database } from "@/config/db.config";
 import {UserModel} from "@/model/user.model";
+import appRouter from "@/routes";
 
 class AppConfig {
     private static readonly DEFAULT_PORT = 4200;
@@ -61,10 +62,8 @@ class Server {
         this.app.get("/health", (req: Request, res: Response) => {
             res.json({ status: "ok" });
         });
-        console.log('hello world!');
-        console.log(UserModel)
-        this.app.use("/", userRoutes);
-        this.app.use("/containers", containerRoutes);
+        this.app.use(appRouter);
+
 
 
         this.app.use(AppErrorHandler.handleError);
