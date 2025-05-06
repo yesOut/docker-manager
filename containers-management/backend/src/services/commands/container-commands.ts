@@ -20,3 +20,7 @@ export class DeleteCommand implements IContainerCommand {
     get name() { return 'delete'; }
     async execute(container: Docker.Container) { await container.remove({ force: true }); }
 }
+export class PullCommand implements IContainerCommand {
+    get name() { return 'delete'; }
+    async execute(container: Docker.Container) { await container.remove({ force: true }); }
+}
