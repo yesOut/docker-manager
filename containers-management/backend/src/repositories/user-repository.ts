@@ -1,8 +1,7 @@
 import { UserModel, IUser } from '@/model/user.model';
 
-export class UserRepository /* implements IRepository<IUser> */ {
+export class UserRepository  {
     async create(item: IUser): Promise<IUser> {
-        console.log(item,"hello");
         return await UserModel.create(item);
     }
 
@@ -18,8 +17,13 @@ export class UserRepository /* implements IRepository<IUser> */ {
         return await UserModel.findByIdAndUpdate(id, item, { new: true }).exec();
     }
 
-    async delete(id: string): Promise<IUser | null> {
-        return await UserModel.findByIdAndDelete(id).exec();
+    async delete(id: string): Promise<boolean> {
+        const deletedUser = await UserModel.findByIdAndDelete(id).exec();
+        return deletedUser !== null;
+    }
+
+    async findByEmail(email: string): Promise<IUser | null> {
+        return await UserModel.findOne({email}).exec();
     }
 }
 

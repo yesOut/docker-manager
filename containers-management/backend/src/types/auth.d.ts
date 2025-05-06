@@ -2,10 +2,13 @@ export interface User {
     id: string;
     firstName: string;
     lastName: string;
+    phoneNumber: string;
+    state:string;
+    country: string;
     email: string;
-    password: string;
     role: 'user' | 'admin';
-    createdAt: Date;
+    password: string;
+    createdAt?: Date;
 }
 
 export interface LoginCredentials {

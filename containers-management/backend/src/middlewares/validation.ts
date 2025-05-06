@@ -17,28 +17,16 @@ export const validationMiddleware = {
 
     authValidation: {
         register: [
-            body('firstName')
-                .isLength({min:1})
-                .withMessage('Valid firstName is required'),
-            body('lastName')
-            .isLength({min:1})
-            .withMessage('Valid lastName is required'),
-            body('email')
-                .isEmail()
-                .withMessage('Valid email is required')
-                .normalizeEmail(),
-            body('password')
-                .isLength({ min: 8 })
-                .withMessage('Password must be at least 8 characters'),
-            body('confirmPassword')
-                .custom((value, { req }) => value === req.body.password)
-                .withMessage('Passwords do not match'),
-            body('role')
-                .optional()
-                .isIn(Object.values({roles}))
-                .withMessage('Invalid user role')
+            body('firstName').isLength({ min: 1 }).withMessage('Valid firstName is required'),
+            body('lastName').isLength({ min: 1 }).withMessage('Valid lastName is required'),
+            body('phoneNumber').isLength({ min: 1 }).withMessage('Valid phone number is required'),
+            body('state').isLength({ min: 1 }).withMessage('Valid state is required'),
+            body('country').isLength({ min: 1 }).withMessage('Valid country is required'),
+            body('email').isEmail().withMessage('Valid email is required').normalizeEmail(),
+            body('role').optional().isIn(['user', 'admin']).withMessage('Invalid user role'),
+            body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
+            body('confirmPassword').custom((value, { req }) => value === req.body.password).withMessage('Passwords do not match')
         ],
-
         login: [
             body('email').isEmail().withMessage('Valid email required'),
             body('password').exists().withMessage('Password is required')
