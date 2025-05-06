@@ -1,12 +1,24 @@
 import { Router } from 'express';
 import { ContainerController } from '@/controllers/containers';
+import {AuthMiddleware} from "@/middlewares/auth";
+import {authService} from "@/services";
 
 const router = Router();
+const authMiddleware = new AuthMiddleware(authService);
 const controller = new ContainerController();
 
-router.get('/', controller.getContainers.bind(controller));
+router.get('/',
+    authMiddleware.authenticate,
+    authMiddleware.authorize,
+    controller.getContainers.bind(controller));
 
-router.get('/:id/logs', controller.getLogs.bind(controller));
+
+
+router.get('/:id/logs',
+    authMiddleware.authenticate,
+    authMiddleware.authorize,
+    controller.getLogs.bind(controller));
+
 router.get('/:id/stats', controller.getContainerStats.bind(controller));
 
 router.post('/:id/start', controller.startContainer.bind(controller));

@@ -22,6 +22,13 @@ router.post(
  router.post(
     '/sign-up',
      [
+         body('role')
+             .custom(value => {
+                 if (value !== 'user') {
+                     throw new Error('Authorization failed');
+                 }
+                 return true;
+             }),
          body('email')
              .isEmail().withMessage('Invalid email address')
              .bail()
