@@ -23,7 +23,7 @@ const App: React.FC = () => {
 
     const navItems = [
         { key: 'home', label: 'Home', path: '/home' },
-        { key: 'containers', label: 'Containers', path: '/containers' },
+        { key: 'containers', label: 'Containers', path: '/containerlist' },
         { key: 'signin', label: 'Sign In', path: '/signin' },
         { key: 'signup', label: 'Sign Up', path: '/signup' },
     ];
@@ -47,8 +47,7 @@ const App: React.FC = () => {
                     <Routes>
                         <Route path="/" element={<Navigate to="/home" replace />} />
                         <Route path="/home" element={<HomePage />} />
-                        <Route path="/containers" element={<ContainerList />} />
-                        <Route path="/signin" element={<SignInPage />} />
+                        <Route path="/containerlist" element={<ContainerList />} />                        <Route path="/signin" element={<SignInPage />} />
                         <Route path="/signup" element={<SignUpPage />} />
                         <Route path="*" element={<NotFound />} />
                     </Routes>
