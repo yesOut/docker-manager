@@ -1,4 +1,5 @@
 import Docker from "dockerode";
+import { Readable } from 'stream';
 
 export interface IContainer {
     id: string;
@@ -38,4 +39,32 @@ export interface IContainerService {
 export interface IContainerCommand {
     execute(container: Docker.Container): Promise<void>;
     readonly name: string;
+}
+export interface IPullImageOptions {
+    image: string;
+    tag?: string;
+    auth?: {
+        username: string;
+        password: string;
+        serveraddress?: string;
+        email?: string;
+    };
+
+}
+export interface PullRequestBody {
+    image: string;
+    tag?: string;
+    auth?: {
+        username: string;
+        password: string;
+        serveraddress?: string;
+        email?: string;
+    };
+}
+
+export interface IImagePullResult {
+    stream: NodeJS.ReadableStream ;
+}
+export interface IImageRepository {
+    pullImage(opts: IPullImageOptions): Promise<IImagePullResult>;
 }

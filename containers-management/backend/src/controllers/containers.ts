@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { ContainerService } from '@/services/conatiner-service';
 import { StartCommand, StopCommand, RestartCommand, DeleteCommand } from '@/services/commands/container-commands';
-import {IContainerCommand, IContainerStats} from '@/services/interfaces';
+import {IContainerCommand, IContainerStats,} from '@/services/interfaces';
 
 export class ContainerController {
   constructor(private service: ContainerService = new ContainerService()) {}
@@ -47,6 +47,9 @@ export class ContainerController {
 
   async deleteContainer(req: Request, res: Response) {
     await this.handleCommand(req, res, new DeleteCommand());
+  }
+  async pullImage(req: Request, res: Response) {
+    await this.handleCommand(req, res, new RestartCommand());
   }
 
   private async handleCommand(req: Request, res: Response, command: IContainerCommand) {
