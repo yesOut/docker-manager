@@ -1,11 +1,11 @@
 import Docker from 'dockerode';
-import { IContainer, IContainerRepository } from './interfaces';
+import {IContainer, IContainerRepository} from './interfaces';
 
 export class DockerContainerRepository implements IContainerRepository {
     private docker = new Docker();
 
     async listContainers(all = true): Promise<IContainer[]> {
-        const containers = await this.docker.listContainers({ all });
+        const containers = await this.docker.listContainers({all});
         return containers.map(container => ({
             id: container.Id,
             name: container.Names[0]?.replace("/", "") || 'unnamed',
@@ -17,7 +17,7 @@ export class DockerContainerRepository implements IContainerRepository {
 
     async getStats(containerId: string): Promise<any> {
         const container = this.docker.getContainer(containerId);
-        return container.stats({ stream: false });
+        return container.stats({stream: false});
     }
 
     async getLogs(containerId: string, options?: Docker.ContainerLogsOptions): Promise<NodeJS.ReadableStream> {

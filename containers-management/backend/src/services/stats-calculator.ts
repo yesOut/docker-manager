@@ -1,4 +1,4 @@
-import { IContainerStats } from './interfaces';
+import {IContainerStats} from './interfaces';
 
 export class StatsCalculator {
     static calculate(stats: any): IContainerStats {

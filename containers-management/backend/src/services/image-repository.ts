@@ -1,11 +1,11 @@
 import Docker from 'dockerode';
-import { PullImageCommand } from './commands/images-commands'
+import {PullImageCommand} from './commands/images-commands'
 import {IPullImageOptions} from "@/services/interfaces";
 
 const docker = new Docker();
 
 async function handleUserInputPull(image: string, tag?: string, auth?: IPullImageOptions['auth']) {
-    const pullCommand = new PullImageCommand({ image, tag, auth });
+    const pullCommand = new PullImageCommand({image, tag, auth});
 
     try {
         await pullCommand.pullImage(docker);

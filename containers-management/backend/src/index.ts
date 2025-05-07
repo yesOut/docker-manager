@@ -1,9 +1,9 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, {Request, Response, NextFunction} from "express";
 import cors from "cors";
 import containerRoutes from "./routes/containers";
 import userRoutes from "@/routes/user.routes";
-import { config } from "@/config/environment";
-import { database } from "@/config/db.config";
+import {config} from "@/config/environment";
+import {database} from "@/config/db.config";
 import {UserModel} from "@/model/user.model";
 import appRouter from "@/routes";
 
@@ -36,7 +36,7 @@ class AppErrorHandler {
         next: NextFunction
     ): void {
         console.error(err.stack);
-        res.status(500).json({ error: err.message || "Something went wrong!" });
+        res.status(500).json({error: err.message || "Something went wrong!"});
     }
 }
 
@@ -55,15 +55,14 @@ class Server {
     private applyMiddlewares(): void {
         this.app.use(cors(AppConfig.getCorsOptions()));
         this.app.use(express.json());
-        this.app.use(express.urlencoded({ extended: true }));
+        this.app.use(express.urlencoded({extended: true}));
     }
 
     private applyRoutes(): void {
         this.app.get("/health", (req: Request, res: Response) => {
-            res.json({ status: "ok" });
+            res.json({status: "ok"});
         });
         this.app.use(appRouter);
-
 
 
         this.app.use(AppErrorHandler.handleError);

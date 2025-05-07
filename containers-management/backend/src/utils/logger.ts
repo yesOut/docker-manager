@@ -1,4 +1,4 @@
-import { config } from '@/config/environment';
+import {config} from '@/config/environment';
 
 type LogLevel = 'error' | 'warn' | 'info' | 'verbose' | 'debug';
 
