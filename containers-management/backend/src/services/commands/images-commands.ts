@@ -1,5 +1,5 @@
 import Docker from 'dockerode';
-import { IContainerCommand, IPullImageOptions } from '../interfaces';
+import {IContainerCommand, IPullImageOptions} from '../interfaces';
 
 export class PullImageCommand implements IContainerCommand {
     private readonly options: IPullImageOptions;
@@ -21,7 +21,7 @@ export class PullImageCommand implements IContainerCommand {
         const authconfig = this.options.auth || undefined;
 
         return new Promise((resolve, reject) => {
-            docker.pull(imageRef, { authconfig }, (err, stream) => {
+            docker.pull(imageRef, {authconfig}, (err, stream) => {
                 if (err) return reject(err);
                 if (stream) {
                     docker.modem.followProgress(stream, onFinished, onProgress);

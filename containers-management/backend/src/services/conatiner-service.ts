@@ -1,12 +1,13 @@
 import {IContainerService, IContainer, IContainerStats, IContainerCommand, IContainerRepository} from './interfaces';
-import { DockerContainerRepository } from './docker-repository';
-import { StatsCalculator } from './stats-calculator';
+import {DockerContainerRepository} from './docker-repository';
+import {StatsCalculator} from './stats-calculator';
 
 export class ContainerService implements IContainerService {
     constructor(
         private repository: IContainerRepository = new DockerContainerRepository(),
         private statsCalculator: typeof StatsCalculator = StatsCalculator
-    ) {}
+    ) {
+    }
 
     async getContainers(): Promise<IContainer[]> {
         return this.repository.listContainers(true);

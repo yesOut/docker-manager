@@ -1,12 +1,14 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { IUserRepository } from '@/interfaces/user-repository';
-import { LoginCredentials, RegistrationData, AuthPayload, User } from '@/types/auth';
+import {IUserRepository} from '@/interfaces/user-repository';
+import {LoginCredentials, RegistrationData, AuthPayload, User} from '@/types/auth';
 
 export interface IRefreshTokenRepository {
     create(userId: string, token: string, expiresAt: Date): Promise<void>;
+
     findByToken(token: string): Promise<{ userId: string; expiresAt: Date } | null>;
+
     deleteByToken(token: string): Promise<void>;
 }
 
@@ -16,7 +18,8 @@ export class AuthService {
         private readonly refreshTokenRepository: IRefreshTokenRepository,
         private readonly jwtSecret: string,
         private readonly saltRounds: number = 10,
-    ) {}
+    ) {
+    }
 
     async register(userData: RegistrationData): Promise<User> {
         const existingUser = await this.userRepository.findByEmail(userData.email);
@@ -42,7 +45,7 @@ export class AuthService {
         const expiresAt = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
 
         await this.refreshTokenRepository.create(user.id, refreshToken, expiresAt);
-        return { accessToken, refreshToken };
+        return {accessToken, refreshToken};
     }
 
     async refreshAccessToken(refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> {
@@ -63,7 +66,7 @@ export class AuthService {
         await this.refreshTokenRepository.deleteByToken(refreshToken);
         await this.refreshTokenRepository.create(user.id, newRefreshToken, newExpiresAt);
 
-        return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+        return {accessToken: newAccessToken, refreshToken: newRefreshToken};
     }
 
     async logout(refreshToken: string): Promise<void> {
@@ -86,10 +89,11 @@ export class AuthService {
                 role: user.role
             },
             this.jwtSecret,
-            { expiresIn: '1h' }
+            {expiresIn: '1h'}
         );
     }
+
     public signToken(payload: AuthPayload): string {
-        return jwt.sign(payload, this.jwtSecret, { expiresIn: '0.2h' });
+        return jwt.sign(payload, this.jwtSecret, {expiresIn: '0.2h'});
     }
 }

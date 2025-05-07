@@ -3,7 +3,7 @@ export interface User {
     firstName: string;
     lastName: string;
     phoneNumber: string;
-    state:string;
+    state: string;
     country: string;
     email: string;
     role: 'user' | 'admin';
@@ -36,9 +36,14 @@ declare global {
 
 export interface IUserRepository {
     create(user: Omit<User, 'id'>): Promise<User>;
+
     findByEmail(email: string): Promise<User | null>;
+
     findById(id: string): Promise<User | null>;
+
     update(id: string, updates: Partial<Omit<User, 'id'>>): Promise<User | null>;
+
     delete(id: string): Promise<boolean>;
+
     findAll(): Promise<User[]>;
 }
