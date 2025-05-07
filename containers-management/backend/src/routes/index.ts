@@ -7,6 +7,8 @@ import { AuthService } from '@/services/auth';
 import { UserRepository } from '@/repositories/user-repository';
 import userRoutes from "@/routes/user.routes";
 import {authService} from "@/services";
+import router from "@/routes/image-route";
+import imageRoute from "@/routes/image-route";
 
 const appRouter = Router();
 
@@ -22,5 +24,7 @@ const adminController = new AdminController(userRepository);
 
 appRouter.use('/containers', containerRoutes);
 appRouter.use('/api', userRoutes);
+appRouter.use('/api',imageRoute);
+
 
 export default appRouter;
