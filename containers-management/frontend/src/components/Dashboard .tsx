@@ -67,24 +67,20 @@ const DashboardAdmin: React.FC = () => {
                     {/* Header */}
                     <div className="flex justify-between items-center mb-8">
                         <h1 className="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
-                        <div className="flex items-center">
-                            <div className="w-8 h-8 bg-gray-300 rounded-full mr-2"></div>
-                            <span className="text-gray-600">Admin User</span>
-                        </div>
                     </div>
 
                     {/* Stats Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                         <StatsCard
                             title="Total Users"
-                            value="2,543"
+                            value="2"
                             icon="👥"
                             color="bg-blue-500"
                         />
                         <StatsCard
-                            title="Revenue"
-                            value="$45,234"
-                            icon="💰"
+                            title="Docker Containers"
+                            value="4"
+                            icon="🐳"
                             color="bg-green-500"
                         />
                         <StatsCard
