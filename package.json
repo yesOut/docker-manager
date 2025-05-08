@@ -3,9 +3,13 @@
     "@ant-design/icons": "^6.0.0",
     "@material-tailwind/react": "^2.1.10",
     "@tailwindcss/cli": "^4.1.4",
+    "axios": "^1.9.0",
+    "express": "^5.1.0",
     "tailwindcss": "^4.1.4"
   },
   "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.15.14",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "typescript": "^5.8.3"

@@ -121,11 +121,10 @@ const ContainerList: React.FC = () => {
 
   const { data: logs = "", isLoading: logLoading } = useQuery<string>({
     queryKey: ["container-logs", selectedContainer?.id],
-    queryFn: () => {
+    queryFn: async () => {
       if (!selectedContainer) return Promise.resolve("");
-      return api.getLogs(selectedContainer.id).then(data => 
-        typeof data === "object" ? JSON.stringify(data, null, 2) : String(data)
-      );
+      const data = await api.getLogs(selectedContainer.id);
+      return typeof data === "object" ? JSON.stringify(data, null, 2) : String(data);
     },
     enabled: !!selectedContainer,
     refetchInterval: selectedContainer ? 2000 : false,

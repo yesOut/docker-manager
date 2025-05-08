@@ -10,7 +10,7 @@ const router = Router();
 const authMiddleware = new AuthMiddleware(authService);
 
 router.post(
-    '/login',
+    '/auth/login',
     (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -20,7 +20,7 @@ router.post(
     }
 );
  router.post(
-    '/sign-up',
+    '/auth/register',
      [
          body('email')
              .isEmail().withMessage('Invalid email address')

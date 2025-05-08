@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import containerRoutes from './containers';
+
 /*
 import { AdminController } from '@/controllers/admin';
 */
+
 import { AuthService } from '@/services/auth';
 import { UserRepository } from '@/repositories/user-repository';
 import userRoutes from "@/routes/user.routes";

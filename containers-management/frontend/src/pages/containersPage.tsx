@@ -1,7 +1,7 @@
-import React from "react";
+import React, {JSX} from "react";
 import Containers from '../components/ContainerList';
 
-export default function SignInPage(): JSX.Element {
+export default function containersPage(): JSX.Element {
     return (
         <Containers/>
     );

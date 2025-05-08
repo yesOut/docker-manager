@@ -1,9 +1,37 @@
-import React, {JSX} from "react";
-import { Link } from "react-router-dom";
+import React, {JSX, useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
+import axios from 'axios';
 
 export default function Example(): JSX.Element {
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post('/api/auth/login', {
+                email,
+                password
+            });
+
+            if (!response) throw new Error('Login failed');
+            console.log("No");
+
+            const { accessToken, refreshToken } = response.data;
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('refreshToken', refreshToken);
+            navigate('/containerlist');
+        } catch (err) {
+            // @ts-ignore
+            setError(err.message);
+        }
+    };
+
     return (
-        <>
+        <form onSubmit={handleSubmit} action="#" className="space-y-6">
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <img
@@ -14,22 +42,29 @@ export default function Example(): JSX.Element {
                     <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
                         Sign in to your account
                     </h2>
+                    {error && (
+                        <div className="mt-4 text-red-600 text-sm text-center">
+                            {error}
+                        </div>
+                    )}
                 </div>
 
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                    <form action="#" method="POST" className="space-y-6">
+                    <div className="space-y-6">
                         <div>
                             <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
                                 Email address
                             </label>
                             <div className="mt-2">
                                 <input
+                                    value={email}
                                     id="email"
                                     name="email"
                                     type="email"
                                     required
                                     autoComplete="email"
                                     className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                                    onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div>
                         </div>
@@ -47,6 +82,8 @@ export default function Example(): JSX.Element {
                             </div>
                             <div className="mt-2">
                                 <input
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     id="password"
                                     name="password"
                                     type="password"
@@ -65,7 +102,7 @@ export default function Example(): JSX.Element {
                                 Sign in
                             </button>
                         </div>
-                    </form>
+                    </div>
 
                     <p className="mt-10 text-center text-sm/6 text-gray-500">
                         Don't have an account?{' '}
@@ -78,6 +115,6 @@ export default function Example(): JSX.Element {
                     </p>
                 </div>
             </div>
-        </>
+        </form>
     );
 }
