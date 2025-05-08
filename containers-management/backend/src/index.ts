@@ -6,6 +6,7 @@ import {config} from "@/config/environment";
 import {database} from "@/config/db.config";
 import {UserModel} from "@/model/user.model";
 import appRouter from "@/routes";
+import morgan from 'morgan';
 
 class AppConfig {
     private static readonly DEFAULT_PORT = 4200;
@@ -53,6 +54,7 @@ class Server {
     }
 
     private applyMiddlewares(): void {
+        this.app.use(morgan('common'))
         this.app.use(cors(AppConfig.getCorsOptions()));
         this.app.use(express.json());
         this.app.use(express.urlencoded({extended: true}));
@@ -63,8 +65,6 @@ class Server {
             res.json({status: "ok"});
         });
         this.app.use(appRouter);
-
-
         this.app.use(AppErrorHandler.handleError);
     }
 

@@ -43,11 +43,14 @@ router.post(
              }),
          body('firstName')
              .notEmpty().withMessage('Name is required'),
+         body('role')
+         .isIn(['user']).withMessage('Role is required'),
      ],
     (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
              res.status(400).json({ errors: errors.array() });
+             return ;
         }
         return userController.createUser(req, res, next);
     }
