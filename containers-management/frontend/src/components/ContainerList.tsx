@@ -1,9 +1,9 @@
+import { App as AntdApp } from 'antd';
 import React, { useState, useRef, useCallback } from "react";
 import {
   Table,
   Button,
   Modal,
-  message,
   Spin,
   Card,
   Progress,
@@ -89,6 +89,7 @@ const ContainerList: React.FC = () => {
   const [autoScroll, setAutoScroll] = useState(true);
   const logContainerRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
+  const { message } = AntdApp.useApp();
 
   const { data: containers = [], isLoading } = useQuery<Container[]>({
     queryKey: ["containers"],
@@ -274,7 +275,7 @@ const ContainerList: React.FC = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (text: string, record: Container) => (
+      render: (text: string, wsrecord: Container) => (
         <div className="container-name">
           <CloudServerOutlined className="container-icon" />
           {text}
