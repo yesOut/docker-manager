@@ -1,15 +1,15 @@
 import {body, checkSchema, param, validationResult} from 'express-validator';
-import { Request, Response, NextFunction } from 'express';
-import { UserRepository } from '@/repositories/user-repository';
+import {Request, Response, NextFunction} from 'express';
+import {UserRepository} from '@/repositories/user-repository';
 import {UserModel} from '@/model/user.model'
 
 const userRepository = new UserRepository();
-const roles=['user','admin'];
+const roles = ['user', 'admin'];
 export const validationMiddleware = {
     validateRequest: (req: Request, res: Response, next: NextFunction): void => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            res.status(400).json({ errors: errors.array() });
+            res.status(400).json({errors: errors.array()});
             return;
         }
         next();
@@ -17,15 +17,15 @@ export const validationMiddleware = {
 
     authValidation: {
         register: [
-            body('firstName').isLength({ min: 1 }).withMessage('Valid firstName is required'),
-            body('lastName').isLength({ min: 1 }).withMessage('Valid lastName is required'),
-            body('phoneNumber').isLength({ min: 1 }).withMessage('Valid phone number is required'),
-            body('state').isLength({ min: 1 }).withMessage('Valid state is required'),
-            body('country').isLength({ min: 1 }).withMessage('Valid country is required'),
+            body('firstName').isLength({min: 1}).withMessage('Valid firstName is required'),
+            body('lastName').isLength({min: 1}).withMessage('Valid lastName is required'),
+            body('phoneNumber').isLength({min: 1}).withMessage('Valid phone number is required'),
+            body('state').isLength({min: 1}).withMessage('Valid state is required'),
+            body('country').isLength({min: 1}).withMessage('Valid country is required'),
             body('email').isEmail().withMessage('Valid email is required').normalizeEmail(),
             body('role').optional().isIn(['user', 'admin']).withMessage('Invalid user role'),
-            body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
-            body('confirmPassword').custom((value, { req }) => value === req.body.password).withMessage('Passwords do not match')
+            body('password').isLength({min: 8}).withMessage('Password must be at least 8 characters'),
+            body('confirmPassword').custom((value, {req}) => value === req.body.password).withMessage('Passwords do not match')
         ],
         login: [
             body('email').isEmail().withMessage('Valid email required'),
@@ -37,7 +37,7 @@ export const validationMiddleware = {
         idParam: [
             param('id')
                 .isString()
-                .isLength({ min: 64, max: 64 })
+                .isLength({min: 64, max: 64})
                 .withMessage('Invalid container ID format')
                 .matches(/^[a-f0-9]+$/i)
                 .withMessage('Container ID must be hexadecimal')
@@ -72,7 +72,7 @@ export const containerIdSchema = checkSchema({
         in: ['params'],
         isString: true,
         isLength: {
-            options: { min: 64, max: 64 },
+            options: {min: 64, max: 64},
             errorMessage: 'Container ID must be 64 characters long'
         },
         matches: {

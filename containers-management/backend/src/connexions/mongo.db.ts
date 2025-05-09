@@ -1,6 +1,6 @@
-import mongoose, { Model, Document } from 'mongoose';
-import { IDatabase, IRepository } from '@/interfaces/database';
-import { BaseRepository } from '@/repositories/base.repository';
+import mongoose, {Model, Document} from 'mongoose';
+import {IDatabase, IRepository} from '@/interfaces/database';
+import {BaseRepository} from '@/repositories/base.repository';
 
 export class MongooseDatabase implements IDatabase {
     async connect(): Promise<void> {

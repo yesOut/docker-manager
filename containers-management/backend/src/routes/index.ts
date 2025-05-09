@@ -1,12 +1,12 @@
-import { Router } from 'express';
+import {Router} from 'express';
 import containerRoutes from './containers';
 
 /*
 import { AdminController } from '@/controllers/admin';
 */
 
-import { AuthService } from '@/services/auth';
-import { UserRepository } from '@/repositories/user-repository';
+import {AuthService} from '@/services/auth';
+import {UserRepository} from '@/repositories/user-repository';
 import userRoutes from "@/routes/user.routes";
 import {authService} from "@/services";
 import router from "@/routes/image-route";
@@ -23,10 +23,9 @@ const adminController = new AdminController(userRepository);
 */
 
 
-
 appRouter.use('/containers', containerRoutes);
 appRouter.use('/api', userRoutes);
-appRouter.use('/api',imageRoute);
+appRouter.use('/api', imageRoute);
 
 
 export default appRouter;

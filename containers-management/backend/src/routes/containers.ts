@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import { ContainerController } from '@/controllers/containers';
+import {Router} from 'express';
+import {ContainerController} from '@/controllers/containers';
 
 const router = Router();
 const controller = new ContainerController();
