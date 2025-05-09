@@ -1,8 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
-import { IImageRepository, IPullImageOptions,PullRequestBody } from '@/services/interfaces';
+import {Request, Response, NextFunction} from 'express';
+import {IImageRepository, IPullImageOptions, PullRequestBody} from '@/services/interfaces';
 
 export class ImagesController {
-    constructor(private readonly imageRepo: IImageRepository) {}
+    constructor(private readonly imageRepo: IImageRepository) {
+    }
 
     /**
      * POST /images/pull
@@ -18,7 +19,7 @@ export class ImagesController {
         };
 
         try {
-            const { stream } = await this.imageRepo.pullImage(opts);
+            const {stream} = await this.imageRepo.pullImage(opts);
             let log = '';
             stream.on('data', (chunk: { toString: () => string; }) => {
                 log += chunk.toString();
