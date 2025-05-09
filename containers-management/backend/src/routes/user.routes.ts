@@ -19,7 +19,7 @@ router.post(
         return userController.login(req, res, next);
     }
 );
-router.post(
+ router.post(
     '/auth/register',
     [
         body('email')

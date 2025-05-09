@@ -18,7 +18,6 @@ export default function Example(): JSX.Element {
             });
 
             if (!response) throw new Error('Login failed');
-            console.log("No");
 
             const { accessToken, refreshToken } = response.data;
             localStorage.setItem('accessToken', accessToken);
