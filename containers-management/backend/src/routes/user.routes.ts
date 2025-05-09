@@ -19,35 +19,45 @@ router.post(
         return userController.login(req, res, next);
     }
 );
- router.post(
+router.post(
     '/auth/register',
-     [
-         body('email')
-             .isEmail().withMessage('Invalid email address')
-             .bail()
-             .custom(async email => {
-                 const existing = await userRepository.findByEmail( email);
-                 if (existing) {
-                     throw new Error('Email already in use');
-                 }
-                 return true;
-             }),
-         body('password')
-             .isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
-         body('confirmPassword')
-             .custom((value, { req }) => {
-                 if (value !== req.body.password) {
-                     throw new Error('Confirm Passwords do not match');
-                 }
-                 return true;
-             }),
-         body('firstName')
-             .notEmpty().withMessage('Name is required'),
-     ],
+    [
+        body('email')
+            .isEmail().withMessage('Invalid email address')
+            .bail()
+            .custom(async email => {
+                const existing = await userRepository.findByEmail( email);
+                if (existing) {
+                    throw new Error('Email already in use');
+                }
+                return true;
+            }),
+        body('password')
+            .isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
+        body('confirmPassword')
+            .custom((value, { req }) => {
+                if (value !== req.body.password) {
+                    throw new Error('Confirm Passwords do not match');
+                }
+                return true;
+            }),
+        body('firstName')
+            .notEmpty().withMessage('Name is required'),
+        body('role')
+            .custom(role => {
+                if (role === 'admin') {
+                    throw new Error('Unauthorized');
+                }
+                return true;
+            })
+            .isIn(['user']).withMessage('Role is required')
+        ,
+    ],
     (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-             res.status(400).json({ errors: errors.array() });
+            res.status(400).json({ errors: errors.array() });
+            return ;
         }
         return userController.createUser(req, res, next);
     }
@@ -75,7 +85,7 @@ router.put(
     (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-             res.status(400).json({ errors: errors.array() });
+            res.status(400).json({ errors: errors.array() });
         }
         return userController.updateUser(req, res, next);
     }
