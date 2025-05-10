@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+
+
 :root {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
     Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
@@ -10,19 +12,30 @@
 
 body {
   margin: 0;
+  padding: 0;
   min-width: 320px;
   min-height: 100vh;
   background-color: #f0f2f5;
 }
 
-/* Container List Styles */
+.ant-layout {
+  background: #f0f2f5 !important;
+  padding: 0 !important;
+}
+
+.ant-layout-content {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 .container-list {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 24px;
+  padding: 0;
   max-width: 1400px;
-  margin: 0 auto;
+  justify-items: center;
+  margin: 50px;
 }
 
 .container-card {
@@ -43,7 +56,6 @@ body {
   font-weight: 500;
 }
 
-/* Resource Usage Styles */
 .resource-usage {
   min-width: 200px;
   padding: 8px;
@@ -83,7 +95,6 @@ body {
   color: #999;
 }
 
-/* Container Logs Styles */
 .logs-container {
   background-color: #1e1e1e;
   padding: 16px;
@@ -101,7 +112,6 @@ body {
   line-height: 1.4;
 }
 
-/* Ant Design Overrides */
 .ant-layout {
   background: #f0f2f5;
 }
@@ -127,7 +137,6 @@ body {
   transition: all 0.3s ease-in-out;
 }
 
-/* Loading States */
 .ant-spin-dot i {
   background-color: #1677ff;
 }
@@ -136,7 +145,6 @@ body {
   background-color: #1677ff;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .container-list {
     padding: 16px;
@@ -147,7 +155,6 @@ body {
   }
 }
 
-/* Logs Viewer Styles */
 .logs-viewer {
   display: flex;
   flex-direction: column;
@@ -254,7 +261,6 @@ body {
   background-color: #1677ff;
 }
 
-/* Modal Overrides for Logs */
 .ant-modal-content {
   padding: 0 !important;
   overflow: hidden;
@@ -272,7 +278,6 @@ body {
   color: #fff !important;
 }
 
-/* Delete Confirmation Modal Styles */
 .delete-confirm-modal .ant-modal-content {
   padding: 24px !important;
 }
@@ -334,7 +339,6 @@ body {
   border-color: #ff7875;
 }
 
-/* Security Analysis Styles */
 .security-analysis {
   color: #d4d4d4;
 }
@@ -415,7 +419,6 @@ body {
   padding: 48px;
 }
 
-/* Socket Loading Styles */
 .socket-loading {
   position: fixed;
   top: 0;

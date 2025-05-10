@@ -86,5 +86,6 @@ export const uniqueEmailValidator = body('email').custom(async (email) => {
     const user = await userRepository.findByEmail(email);
     if (user) {
         throw new Error('Email already in use');
+
     }
 });
