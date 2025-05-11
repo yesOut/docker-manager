@@ -6,7 +6,7 @@ export class ImagesController {
     }
 
     /**
-     * POST /images/pull
+     * POST /api/pull
      * Body: { image, tag?, auth? }
      */
     public async pull(req: Request, res: Response, next: NextFunction) {

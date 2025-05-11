@@ -58,7 +58,7 @@ export default function ContainersPage(): JSX.Element {
                         onNavigate={handleNavigate}
                         onLogout={handleLogout}
                     />
-                    <Content className="container mx-auto p-4">
+                    <Content >
                         <Containers />
                     </Content>
                     <ScrollToTop />

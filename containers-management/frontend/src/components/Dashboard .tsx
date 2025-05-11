@@ -29,21 +29,19 @@ const DashboardAdmin: React.FC = () => {
     const navigation: NavigationItem[] = [
         { name: 'Dashboard', icon: '📊', current: true },
         { name: 'Users', icon: '👤', current: false },
-        { name: 'Products', icon: '📦', current: false },
-        { name: 'Analytics', icon: '📈', current: false },
-        { name: 'Settings', icon: '⚙️', current: false },
+        { name: 'Docker Containers', icon: '🐳', current: false },
+        { name: 'CPU', icon: '🏾', current: false },
+        { name: 'Memory', icon: '💾', current: false },
     ];
 
     const recentActivity = [
-        { id: 1, user: 'John Doe', action: 'Created new post', time: '5 min ago' },
-        { id: 2, user: 'Jane Smith', action: 'Updated profile', time: '2 hours ago' },
-        { id: 3, user: 'Mike Johnson', action: 'Deleted comment', time: '4 hours ago' },
+        { id: 1, user: 'Eya Oueslati', images: '5', time: '5 min ago' },
+        { id: 2, user: 'Rahma Khlifi', images: '3', time: '2 hours ago' },
     ];
 
     return (
         <div className="min-h-screen bg-gray-100">
             <div className="flex">
-                {/* Sidebar */}
                 <div className="w-64 bg-white shadow-lg min-h-screen p-4">
                     <div className="text-xl font-bold text-gray-800 mb-8">Admin Panel</div>
                     <nav>
@@ -62,14 +60,11 @@ const DashboardAdmin: React.FC = () => {
                     </nav>
                 </div>
 
-                {/* Main Content */}
                 <div className="flex-1 p-8">
-                    {/* Header */}
                     <div className="flex justify-between items-center mb-8">
                         <h1 className="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
                     </div>
 
-                    {/* Stats Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                         <StatsCard
                             title="Total Users"
@@ -84,28 +79,27 @@ const DashboardAdmin: React.FC = () => {
                             color="bg-green-500"
                         />
                         <StatsCard
-                            title="Products"
-                            value="1,234"
-                            icon="🛍️"
+                            title="CPU"
+                            value="---"
+                            icon="🏾️"
                             color="bg-purple-500"
                         />
                         <StatsCard
-                            title="Active Sessions"
-                            value="573"
-                            icon="⚡"
+                            title="Memory"
+                            value="---"
+                            icon="💾"
                             color="bg-orange-500"
                         />
                     </div>
 
-                    {/* Chart Section */}
+
                     <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
-                        <h2 className="text-xl font-semibold mb-4">Monthly Analytics</h2>
+                        <h2 className="text-xl font-semibold mb-4">Analytics</h2>
                         <div className="h-64 bg-gray-100 rounded-lg">
                             {/* Chart placeholder */}
                         </div>
                     </div>
 
-                    {/* Recent Activity */}
                     <div className="bg-white p-6 rounded-lg shadow-sm">
                         <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
                         <div className="overflow-x-auto">
@@ -113,7 +107,7 @@ const DashboardAdmin: React.FC = () => {
                                 <thead>
                                 <tr className="text-left text-gray-600 border-b">
                                     <th className="pb-3">User</th>
-                                    <th className="pb-3">Action</th>
+                                    <th className="pb-3">Images</th>
                                     <th className="pb-3">Time</th>
                                 </tr>
                                 </thead>
@@ -121,7 +115,7 @@ const DashboardAdmin: React.FC = () => {
                                 {recentActivity.map((activity) => (
                                     <tr key={activity.id} className="border-b last:border-b-0">
                                         <td className="py-3">{activity.user}</td>
-                                        <td className="py-3">{activity.action}</td>
+                                        <td className="py-3">{activity.images}</td>
                                         <td className="py-3 text-gray-500">{activity.time}</td>
                                     </tr>
                                 ))}
