@@ -1,36 +1,62 @@
-import React, {JSX, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import React, { JSX, useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
+import { message } from 'antd';
 
-export default function Example(): JSX.Element {
-
+export default function Signin(): JSX.Element {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
+    const [messageApi, contextHolder] = message.useMessage();
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            messageApi.success('Logged in successfully!', 1, () => {
+                navigate('/containerlist');
+            });
+        }
+    }, [isLoggedIn, messageApi, navigate]);
+
+    const validateEmail = (email: string) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError('');
+
+        if (!validateEmail(email)) {
+            setError('Please enter a valid email address');
+            return;
+        }
+
+        if (!password) {
+            setError('Please enter your password');
+            return;
+        }
+
         try {
             const response = await axios.post('/api/auth/login', {
                 email,
                 password
             });
 
-            if (!response) throw new Error('Login failed');
-
             const { accessToken, refreshToken } = response.data;
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('refreshToken', refreshToken);
-            navigate('/containerlist');
+            setIsLoggedIn(true);
         } catch (err) {
-            // @ts-ignore
-            setError(err.message);
+            setError('Invalid email or password');
+            setIsLoggedIn(false);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} action="#" className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+            {contextHolder}
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <img
