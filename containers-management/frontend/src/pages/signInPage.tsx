@@ -1,8 +1,11 @@
-import React from "react";
-import Signin from '../components/Login'
+import React, {JSX} from "react";
+import { App } from 'antd';
+import Signin from '../components/Login';
 
 export default function SignInPage(): JSX.Element {
     return (
-        <Signin/>
+        <App>
+            <Signin/>
+        </App>
     );
 }

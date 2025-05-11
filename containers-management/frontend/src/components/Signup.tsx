@@ -1,13 +1,10 @@
 import React, { JSX, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { message } from 'antd';
 
-export default function Example(): JSX.Element {
-    let pathname;
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [pathname]);
-
+export default function Signup(): JSX.Element {
+    const [messageApi, contextHolder] = message.useMessage();
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -21,7 +18,24 @@ export default function Example(): JSX.Element {
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isRegistered, setIsRegistered] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (isRegistered) {
+            messageApi.success('Registration successful! Redirecting to login...', 1.5, () => {
+                navigate('/signin');
+            });
+        }
+    }, [isRegistered, messageApi, navigate]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+        setErrors(prev => ({ ...prev, [e.target.name]: '' }));
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -47,7 +61,7 @@ export default function Example(): JSX.Element {
             );
 
             if (response.status === 201) {
-                navigate('/signin');
+                setIsRegistered(true);
             }
         } catch (error: any) {
             if (error.response?.data?.errors) {
@@ -64,17 +78,9 @@ export default function Example(): JSX.Element {
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-        setErrors(prev => ({ ...prev, [e.target.name]: '' }));
-    };
-
-
     return (
         <>
+            {contextHolder}
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <img
