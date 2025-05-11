@@ -28,7 +28,7 @@ const App: React.FC = () => {
                     <Layout className="layout">
                         <Content style={{ padding: '24px', minHeight: 'calc(100vh - 64px)' }}>
                             <Routes>
-                                <Route path="/" element={<Navigate to="/home" replace />} />
+                                <Route path="/" element={<Navigate to="/signin" replace />} />
                                 <Route path="/signin" element={<SignInPage />} />
                                 <Route element={<ProtectedRoute />} />
                                 <Route path="/home" element={<HomePage />} />

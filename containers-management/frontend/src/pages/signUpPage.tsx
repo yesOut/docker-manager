@@ -1,8 +1,11 @@
-import React from "react";
+import React, {JSX} from "react";
+import { App } from 'antd';
 import Signup from "../components/Signup";
 
-export default function SignInPage(): JSX.Element {
+export default function SignUpPage(): JSX.Element {
     return (
-        <Signup/>
+        <App>
+            <Signup/>
+        </App>
     );
 }
