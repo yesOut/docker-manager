@@ -1,6 +1,6 @@
-import { UserModel, IUser } from '@/model/user.model';
+import {UserModel, IUser} from '@/model/user.model';
 
-export class UserRepository  {
+export class UserRepository {
     async create(item: IUser): Promise<IUser> {
         return await UserModel.create(item);
     }
@@ -14,7 +14,7 @@ export class UserRepository  {
     }
 
     async update(id: string, item: Partial<IUser>): Promise<IUser | null> {
-        return await UserModel.findByIdAndUpdate(id, item, { new: true }).exec();
+        return await UserModel.findByIdAndUpdate(id, item, {new: true}).exec();
     }
 
     async delete(id: string): Promise<boolean> {

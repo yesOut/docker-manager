@@ -6,7 +6,8 @@ import {
 } from '@/services/interfaces';
 
 export class DockerImageRepository implements IImageRepository {
-    constructor(private readonly docker: Docker) {}
+    constructor(private readonly docker: Docker) {
+    }
 
     public pullImage(opts: IPullImageOptions): Promise<IImagePullResult> {
         const imageRef = opts.tag ? `${opts.image}:${opts.tag}` : opts.image;
@@ -14,7 +15,7 @@ export class DockerImageRepository implements IImageRepository {
         return new Promise<IImagePullResult>((resolve, reject) => {
             this.docker.pull(
                 imageRef,
-                { authconfig: opts.auth },
+                {authconfig: opts.auth},
                 (err: Error | null, stream?: NodeJS.ReadableStream) => {
                     if (err) return reject(err);
                     if (!stream) {
@@ -22,7 +23,7 @@ export class DockerImageRepository implements IImageRepository {
                             new Error(`Docker.pull did not return a stream for ${imageRef}`)
                         );
                     }
-                    resolve({ stream });
+                    resolve({stream});
                 }
             );
         });
