@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 interface StatsCardProps {
     title: string;
     value: string;
-    icon: string; // Using string for text-based icons
+    icon: string;
     color: string;
 }
 
@@ -26,11 +27,29 @@ interface NavigationItem {
 }
 
 const DashboardAdmin: React.FC = () => {
+    const [cpuUsage, setCpuUsage] = useState<string>('Loading...');
+    const [memoryUsage, setMemoryUsage] = useState<string>('Loading...');
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const res = await axios.get('http://localhost:3001/stats');
+                setCpuUsage(`${res.data.cpu}%`);
+                setMemoryUsage(`${res.data.memory}%`);
+            } catch (err) {
+                console.error('Failed to fetch stats', err);
+                setCpuUsage('Error');
+                setMemoryUsage('Error');
+            }
+        };
+        fetchStats();
+    }, []);
+
     const navigation: NavigationItem[] = [
         { name: 'Dashboard', icon: '📊', current: true },
         { name: 'Users', icon: '👤', current: false },
         { name: 'Docker Containers', icon: '🐳', current: false },
-        { name: 'CPU', icon: '🏾', current: false },
+        { name: 'CPU', icon: '💻', current: false },
         { name: 'Memory', icon: '💾', current: false },
     ];
 
@@ -66,32 +85,11 @@ const DashboardAdmin: React.FC = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <StatsCard
-                            title="Total Users"
-                            value="2"
-                            icon="👥"
-                            color="bg-blue-500"
-                        />
-                        <StatsCard
-                            title="Docker Containers"
-                            value="4"
-                            icon="🐳"
-                            color="bg-green-500"
-                        />
-                        <StatsCard
-                            title="CPU"
-                            value="---"
-                            icon="🏾️"
-                            color="bg-purple-500"
-                        />
-                        <StatsCard
-                            title="Memory"
-                            value="---"
-                            icon="💾"
-                            color="bg-orange-500"
-                        />
+                        <StatsCard title="Total Users" value="2" icon="👥" color="bg-blue-500" />
+                        <StatsCard title="Docker Containers" value="4" icon="🐳" color="bg-green-500" />
+                        <StatsCard title="CPU" value={cpuUsage} icon="💻" color="bg-purple-500" />
+                        <StatsCard title="Memory" value={memoryUsage} icon="💾" color="bg-orange-500" />
                     </div>
-
 
                     <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
                         <h2 className="text-xl font-semibold mb-4">Analytics</h2>
