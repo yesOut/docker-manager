@@ -8,6 +8,10 @@ export interface IContainer {
     state: string;
     status: string;
 }
+export interface IImage {
+    image: string;
+    tag?: string;
+}
 
 export interface IContainerStats {
     cpu: string;
@@ -80,3 +84,9 @@ export interface IImagePullResult {
 export interface IImageRepository {
     pullImage(opts: IPullImageOptions): Promise<IImagePullResult>;
 }
+export interface IImageListRepository {
+    listImages(all?: boolean): Promise<IImage[]>;
+
+}
+
+
