@@ -11,8 +11,8 @@ import morgan from 'morgan';
 class AppConfig {
     private static readonly DEFAULT_PORT = 4200;
     private static readonly ALLOWED_ORIGINS = [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5174",
     ];
 
     public static getPort(): number {

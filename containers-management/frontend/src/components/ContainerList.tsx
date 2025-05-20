@@ -26,6 +26,7 @@ import {
 } from "@ant-design/icons";
 import "../assets/ContainerList.css";
 import {useQuery, useMutation, useQueryClient, QueryFunction} from "@tanstack/react-query";
+import PullForm from "./PullForm";
 
 axios.defaults.baseURL = "http://localhost:4200";
 axios.defaults.headers.common["Content-Type"] = "application/json";
@@ -533,6 +534,18 @@ const ContainerList: React.FC = () => {
         </div>
     );
 
+    const pullContainers = (containers: Container[], title: string) => (
+        <div className="section">
+            <div className="section-header">
+                <h2>
+                    <CloudServerOutlined/> {title}
+                </h2>
+
+            </div>
+            <PullForm/>
+        </div>
+    );
+
     return (
         <div className="container-list">
             <Modal
@@ -619,6 +632,7 @@ const ContainerList: React.FC = () => {
 
             {renderContainers(runningContainers, "Running Containers")}
             {renderContainers(stoppedContainers, "Stopped Containers")}
+            {pullContainers(stoppedContainers, "Add Containers")}
         </div>
     );
 };
