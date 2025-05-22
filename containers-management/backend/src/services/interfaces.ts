@@ -9,6 +9,7 @@ export interface IContainer {
     status: string;
 }
 export interface IImage {
+    id:string;
     image: string;
     tag?: string;
 }
@@ -86,7 +87,6 @@ export interface IImageRepository {
 }
 export interface IImageListRepository {
     listImages(all?: boolean): Promise<IImage[]>;
-
 }
 
 
