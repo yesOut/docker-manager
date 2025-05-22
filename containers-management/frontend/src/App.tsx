@@ -31,7 +31,7 @@ const App: React.FC = () => {
                                 <Route path="/" element={<Navigate to="/signin" replace />} />
                                 <Route path="/signin" element={<SignInPage />} />
                                 <Route element={<ProtectedRoute />} />
-                                <Route path="/home" element={<HomePage />} />
+                                <Route path="/DashBoar-admin" element={<HomePage />} />
                                 <Route path="/containerlist" element={<ContainerList />} />
                                 <Route path="/signup" element={<SignUpPage />} />
                                 <Route path="*" element={<NotFound />} />

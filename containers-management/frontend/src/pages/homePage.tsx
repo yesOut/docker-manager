@@ -12,7 +12,7 @@ import Containers from "../components/ContainerList";
 const {Content} = Layout;
 
 const navItems = [
-    { key: 'home', label: 'Home', path: '/home' },
+    { key: 'DashBoard Admin', label: 'DashBoard Admin', path: '/DashBoar-admin' },
     { key: 'containers', label: 'Containers', path: '/containerlist' }
 ];
 
@@ -31,7 +31,7 @@ export default function HomePage(): JSX.Element {
         navigate(path);
     };
 
-    const activeKey = location.pathname === '/' ? 'home' : location.pathname.split('/')[1];
+    const activeKey = location.pathname === '/' ? 'DashBoar Admin' : location.pathname.split('/')[1];
 
     const handleLogout = () => {
         try {

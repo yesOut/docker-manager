@@ -9,7 +9,7 @@ import { Footer } from "../components/Footer";
 const { Content } = Layout;
 
 const navItems = [
-    { key: 'home', label: 'Home', path: '/home' },
+    { key: 'DashBoard Admin', label: 'DashBoard Admin', path: '/DashBoar-admin' },
     { key: 'containers', label: 'Containers', path: '/containerlist' }
 ];
 
