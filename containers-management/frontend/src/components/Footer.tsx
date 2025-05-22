@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export const Footer: React.FC = () => {
     const navItems = [
-        { name: 'Home', path: '/' },
+        { name: 'Dashboard Admin', path: '/' },
         { name: 'Containers', path: '/containerlist' },
         { name: 'Sign In', path: '/signin' },
         { name: 'Sign Up', path: '/signup' }
