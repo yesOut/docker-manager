@@ -20,8 +20,9 @@ export default function Signin(): JSX.Element {
     }, [isLoggedIn, messageApi, navigate]);
 
     const validateEmail = (email: string) => {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const re = /\S+@\S+\.\S+/;
         return re.test(email);
+
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -44,9 +45,9 @@ export default function Signin(): JSX.Element {
                 password
             });
 
-            const { accessToken, refreshToken } = response.data;
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
+            const { token } = response.data;
+            console.log("debug =>",token);
+            localStorage.setItem('token', token);
             setIsLoggedIn(true);
         } catch (err) {
             setError('Invalid email or password');

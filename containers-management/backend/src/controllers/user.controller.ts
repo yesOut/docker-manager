@@ -1,4 +1,4 @@
-import {Request, Response, NextFunction} from 'express';
+    import {Request, Response, NextFunction} from 'express';
 import {userRepository} from '@/repositories/user-repository';
 import bcrypt from "bcryptjs";
 import {authService} from "@/services";

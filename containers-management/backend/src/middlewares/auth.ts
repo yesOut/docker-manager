@@ -1,7 +1,6 @@
-import {Request, Response, NextFunction} from 'express';
-import {AuthService} from '@/services/auth';
-import {AuthPayload} from '@/types/auth';
-import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from 'express';
+import { AuthService } from '@/services/auth';
+import { AuthPayload } from '@/types/auth';
 
 declare module 'express' {
     interface Request {
@@ -10,7 +9,14 @@ declare module 'express' {
 }
 
 export class AuthMiddleware {
-    constructor(private readonly authService: AuthService) {
+    constructor(private readonly authService: AuthService) {}
+
+    private extractToken(req: Request): string | null {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return null;
+        }
+        return authHeader.slice(7);
     }
 
     public authenticate = async (
@@ -19,43 +25,34 @@ export class AuthMiddleware {
         next: NextFunction
     ): Promise<void> => {
         try {
-            const authHeader = req.headers.authorization;
-            if (!authHeader) {
-                res.status(401).json({error: 'Missing or invalid Authorization header'});
+            const token = this.extractToken(req);
+            if (!token) {
+                res.status(401).json({ error: 'Missing or invalid Authorization header' });
                 return;
             }
-            if (!authHeader.startsWith('Bearer ')) {
-                res.status(401).json({error: 'Missing or invalid Authorization header'});
-                return;
-            } else {
-                const token = authHeader.slice(7);
-                const payload: AuthPayload = this.authService.verifyToken(token);
-                req.user = {
-                    userId: payload.userId,
-                    email: payload.email,
-                    role: payload.role,
-                };
-            }
+            const payload: AuthPayload = this.authService.verifyToken(token);
+            req.user = {
+                userId: payload.userId,
+                email: payload.email,
+                role: payload.role,
+            };
             next();
-            return;
         } catch (err: any) {
-            const errorMessage = err.message || 'Authentication failed';
-            res.status(401).json({error: errorMessage});
-            return;
+            res.status(401).json({ error: err.message || 'Authentication failed' });
         }
     };
-    public authorize = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+    public authorize = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
         try {
-            const authHeader = req.headers.authorization;
-            if (!authHeader) {
-                res.status(401).json({error: 'Missing or invalid Authorization header'});
+            const token = this.extractToken(req);
+            if (!token) {
+                res.status(401).json({ error: 'Missing or invalid Authorization header' });
                 return;
             }
-            if (!authHeader.startsWith('Bearer ')) {
-                res.status(401).json({error: 'Missing or invalid Authorization header'});
-                return;
-            }
-            const token = authHeader.slice(7);
             const payload: AuthPayload = this.authService.verifyToken(token);
             req.user = {
                 userId: payload.userId,
@@ -63,15 +60,12 @@ export class AuthMiddleware {
                 role: payload.role,
             };
             if (payload.role !== 'admin') {
-                res.status(403).json({error: 'Access denied: Admins only'});
+                res.status(403).json({ error: 'Access denied: Admins only' });
                 return;
             }
             next();
-            return;
         } catch (err: any) {
-            const errorMessage = err.message || 'FORBIDDEN';
-            res.status(403).json({error: errorMessage});
-            return;
+            res.status(403).json({ error: err.message || 'FORBIDDEN' });
         }
-    }
+    };
 }
