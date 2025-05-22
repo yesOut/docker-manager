@@ -46,7 +46,6 @@ export default function Signin(): JSX.Element {
             });
 
             const { token } = response.data;
-            console.log("debug =>",token);
             localStorage.setItem('token', token);
             setIsLoggedIn(true);
         } catch (err) {

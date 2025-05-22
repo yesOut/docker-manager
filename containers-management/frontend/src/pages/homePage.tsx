@@ -38,6 +38,7 @@ export default function HomePage(): JSX.Element {
             clearAuthData();
             messageApi.success('Logged out successfully');
             setTimeout(() => navigate('/signin'), 1000);
+            localStorage.removeItem('token');
         } catch (error) {
             messageApi.error('Logout failed. Please try again.');
             console.error('Logout error:', error);
