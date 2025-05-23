@@ -13,6 +13,8 @@ import router from "@/routes/image-route";
 import imageRoute from "@/routes/image-route";
 import {ImageListRepository} from "@/repositories/Image-list-repository";
 import {ApiResponseFormatter, ImageListController, QueryParameterParser} from "@/controllers/image-list.controller";
+import createImageRouter from "@/routes/image-command.route";
+import {docker} from "@/services/docker";
 
 const appRouter = Router();
 
@@ -34,9 +36,12 @@ const adminController = new AdminController(userRepository);
 */
 
 
+const imageRouter = createImageRouter(docker);
+
 appRouter.use('/containers', containerRoutes);
 appRouter.use('/api', userRoutes);
 appRouter.use('/api', imageRoute);
 appRouter.use('/api/images', imageListController.getListImages);
+appRouter.use('/api/image', imageRouter);
 
 export default appRouter;
