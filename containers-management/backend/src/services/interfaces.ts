@@ -88,3 +88,54 @@ export interface IImageRepository {
 export interface IImageListRepository {
     listImages(all?: boolean): Promise<IImage[]>;
 }
+
+export interface ICPU {
+    readonly cores: number;
+    readonly architecture: string;
+    readonly clockSpeed: string;
+    readonly model: string;
+    readonly vendor: string;
+}
+
+export interface IRAM {
+    readonly total: string;
+    readonly type: string;
+    readonly speed: string;
+    readonly available: string;
+}
+
+export interface IStorage {
+    readonly total: string;
+    readonly type: string;
+    readonly available: string;
+    readonly mountPoint: string;
+    readonly fileSystem: string; // e.g., "ext4", "NTFS"
+}
+
+
+export interface IDeviceInfoProvider {
+    getDeviceId(): string;
+    getDeviceName(): string;
+    getOperatingSystem(): string;
+    getUptime(): number;
+}
+
+export interface IHardwareSpecProvider {
+    getCPU(): ICPU;
+    getRAM(): IRAM;
+    getStorage(): IStorage[];
+}
+
+
+export interface IStaticDevice extends IDeviceInfoProvider, IHardwareSpecProvider {
+    readonly id: string;
+    readonly name: string;
+    readonly lastUpdated: Date;
+
+    getHardwareComponent<T>(componentType: string): T | null;
+}
+
+export interface IDeviceFactory {
+    createDevice(deviceData: any): IStaticDevice;
+    validateDeviceData(deviceData: any): boolean;
+}
