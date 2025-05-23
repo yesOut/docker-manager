@@ -10,24 +10,15 @@ interface Container {
     status: string;
 }
 
-const ContainersTable: React.FC = () => {
-    const [containers, setContainers] = useState<Container[]>([]);
+interface ContainersTableProps {
+    containers: Container[];
+    setContainers: React.Dispatch<React.SetStateAction<Container[]>>;
+}
+
+const ContainersTable: React.FC<ContainersTableProps> = ({ containers, setContainers }) => {
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
     const [containerToDelete, setContainerToDelete] = useState<Container | null>(null);
     const [deleting, setDeleting] = useState(false);
-
-    const fetchContainers = async () => {
-        try {
-            const res = await axios.get('/containers');
-            setContainers(res.data);
-        } catch (err) {
-            console.error('Failed to fetch containers', err);
-        }
-    };
-
-    useEffect(() => {
-        fetchContainers();
-    }, []);
 
     const showDeleteModal = (container: Container) => {
         setContainerToDelete(container);
