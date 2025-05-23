@@ -88,5 +88,3 @@ export interface IImageRepository {
 export interface IImageListRepository {
     listImages(all?: boolean): Promise<IImage[]>;
 }
-
-
