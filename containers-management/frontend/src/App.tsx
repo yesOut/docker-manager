@@ -6,7 +6,8 @@ import ContainerList from './pages/containersPage';
 import { ConfigProvider, ThemeConfig } from 'antd';
 import SignInPage from './pages/signInPage';
 import SignUpPage from './pages/signUpPage';
-import DashBoarAdmin from './pages/dashBoarAdmin';
+import DashBoarAdminPage from './pages/dashBoarAdminPage';
+import HomePage from './pages/homePage';
 import NotFound from './components/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Footer } from './components/Footer';
@@ -31,7 +32,8 @@ const App: React.FC = () => {
                                 <Route path="/" element={<Navigate to="/signin" replace />} />
                                 <Route path="/signin" element={<SignInPage />} />
                                 <Route element={<ProtectedRoute />} />
-                                <Route path="/DashBoar-admin" element={<DashBoarAdmin />} />
+                                <Route path="/home" element={<HomePage />} />
+                                <Route path="/DashBoar-admin" element={<DashBoarAdminPage />} />
                                 <Route path="/containerlist" element={<ContainerList />} />
                                 <Route path="/signup" element={<SignUpPage />} />
                                 <Route path="*" element={<NotFound />} />
