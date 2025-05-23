@@ -15,6 +15,8 @@ import {ImageListRepository} from "@/repositories/Image-list-repository";
 import {ApiResponseFormatter, ImageListController, QueryParameterParser} from "@/controllers/image-list.controller";
 import createImageRouter from "@/routes/image-command.route";
 import {docker} from "@/services/docker";
+import {createDeviceRoutes} from "@/routes/device.route";
+import {Server as SocketIOServer} from "socket.io";
 
 const appRouter = Router();
 
@@ -35,13 +37,13 @@ const imageListController = new ImageListController(
 const adminController = new AdminController(userRepository);
 */
 
-
+const SocketIo = new SocketIOServer()
 const imageRouter = createImageRouter(docker);
-
 appRouter.use('/containers', containerRoutes);
 appRouter.use('/api', userRoutes);
 appRouter.use('/api', imageRoute);
 appRouter.use('/api/images', imageListController.getListImages);
 appRouter.use('/api/image', imageRouter);
+appRouter.use('/api/device', createDeviceRoutes (SocketIo));
 
 export default appRouter;
