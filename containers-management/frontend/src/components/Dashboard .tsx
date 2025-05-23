@@ -31,8 +31,17 @@ interface NavigationItem {
 interface Container {
     id: string;
     name: string;
-    status: string;
     image: string;
+    state: string;
+    status: string;
+}
+
+interface User {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    role: string;
 }
 
 const DashboardAdmin: React.FC = () => {
@@ -44,12 +53,13 @@ const DashboardAdmin: React.FC = () => {
         { name: 'Memory', icon: '💾', current: false },
     ];
 
-    const recentActivity = [
-        { id: 1, user: 'Eya Oueslati', images: '5', time: '5 min ago' },
-        { id: 2, user: 'Rahma Khlifi', images: '3', time: '2 hours ago' },
-    ];
-
     const [containers, setContainers] = useState<Container[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
+
+    const getAuthHeaders = () => {
+        const token = localStorage.getItem('token');
+        return { Authorization: `Bearer ${token}` };
+    };
 
     const fetchContainers = async () => {
         try {
@@ -60,17 +70,20 @@ const DashboardAdmin: React.FC = () => {
         }
     };
 
-    const deleteContainer = async (id: string) => {
+    const fetchUsers = async () => {
         try {
-            await axios.delete(`/containers/${id}`);
-            setContainers((prev) => prev.filter((c) => c.id !== id));
+            const response = await axios.get('/api/users', {
+                headers: getAuthHeaders(),
+            });
+            setUsers(response.data);
         } catch (error) {
-            console.error('Failed to delete container', error);
+            console.error('Failed to fetch users', error);
         }
     };
 
     useEffect(() => {
         fetchContainers();
+        fetchUsers();
     }, []);
 
     return (
@@ -98,17 +111,17 @@ const DashboardAdmin: React.FC = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <StatsCard title="Total Users" value="2" icon="👥" color="bg-blue-500" />
+                        <StatsCard title="Total Users" value={String(users.length)} icon="👥" color="bg-blue-500" />
                         <StatsCard title="Docker Containers" value={String(containers.length)} icon="🐳" color="bg-green-500" />
                         <StatsCard title="CPU" value="---" icon="🏾️" color="bg-purple-500" />
                         <StatsCard title="Memory" value="---" icon="💾" color="bg-orange-500" />
                     </div>
 
-                    <ContainersTable />
+                    <ContainersTable containers={containers} setContainers={setContainers} />
 
                     <div className="bg-white p-6 rounded-lg shadow-sm m-4">
-                        <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-                        <UserTable/>
+                        <h2 className="text-xl font-semibold mb-4">Users</h2>
+                        <UserTable users={users} setUsers={setUsers} />
                     </div>
                 </div>
             </div>
