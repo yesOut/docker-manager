@@ -71,6 +71,7 @@ export class AuthService {
 
     async logout(refreshToken: string): Promise<void> {
         await this.refreshTokenRepository.deleteByToken(refreshToken);
+        localStorage.clear();
     }
 
     verifyToken(token: string): AuthPayload {

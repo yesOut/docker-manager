@@ -16,7 +16,6 @@ export default function UserTable() {
     const [modalVisible, setModalVisible] = useState(false);
     const [form] = Form.useForm();
 
-    // Helper to get the token and set headers
     const getAuthHeaders = () => {
         const token = localStorage.getItem('token');
         return { Authorization: `Bearer ${token}` };

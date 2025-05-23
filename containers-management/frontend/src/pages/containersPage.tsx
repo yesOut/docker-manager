@@ -9,7 +9,7 @@ import { Footer } from "../components/Footer";
 const { Content } = Layout;
 
 const navItems = [
-    { key: 'home', label: 'Home', path: '/home' },
+    { key: 'DashBoard Admin', label: 'DashBoard Admin', path: '/DashBoar-admin' },
     { key: 'containers', label: 'Containers', path: '/containerlist' }
 ];
 
@@ -33,6 +33,8 @@ export default function ContainersPage(): JSX.Element {
             clearAuthData();
             messageApi.success('Logged out successfully');
             setTimeout(() => navigate('/signin'), 1000);
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
         } catch (error) {
             messageApi.error('Logout failed. Please try again.');
             console.error('Logout error:', error);

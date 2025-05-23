@@ -12,7 +12,7 @@ import Containers from "../components/ContainerList";
 const {Content} = Layout;
 
 const navItems = [
-    { key: 'home', label: 'Home', path: '/home' },
+    { key: 'DashBoard Admin', label: 'DashBoard Admin', path: '/DashBoar-admin' },
     { key: 'containers', label: 'Containers', path: '/containerlist' }
 ];
 
@@ -22,7 +22,7 @@ const clearAuthData = () => {
     sessionStorage.removeItem('sessionToken');
 };
 
-export default function HomePage(): JSX.Element {
+export default function DashBoarAdmin(): JSX.Element {
     const navigate = useNavigate();
     const location = useLocation();
     const [messageApi, contextHolder] = message.useMessage();
@@ -31,13 +31,15 @@ export default function HomePage(): JSX.Element {
         navigate(path);
     };
 
-    const activeKey = location.pathname === '/' ? 'home' : location.pathname.split('/')[1];
+    const activeKey = location.pathname === '/' ? 'DashBoar Admin' : location.pathname.split('/')[1];
 
     const handleLogout = () => {
         try {
             clearAuthData();
             messageApi.success('Logged out successfully');
             setTimeout(() => navigate('/signin'), 1000);
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
         } catch (error) {
             messageApi.error('Logout failed. Please try again.');
             console.error('Logout error:', error);
