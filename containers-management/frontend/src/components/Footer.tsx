@@ -8,7 +8,7 @@ export const Footer: React.FC = () => {
     if (!isLoggedIn) return null;
 
     const navItems = [
-        { name: 'Home', path: '/' },
+        { name: 'Home', path: '/home' },
         { name: 'Containers', path: '/containerlist' },
         ...(role === 'admin'
             ? [{ name: 'Dashboard Admin', path: '/DashBoar-admin' }]

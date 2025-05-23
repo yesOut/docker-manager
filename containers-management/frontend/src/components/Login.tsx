@@ -20,19 +20,11 @@ export default function Login(): JSX.Element {
         }
     }, [isLoggedIn, messageApi, navigate]);
 
-    const validateEmail = (email: string) => {
-        const re = /\S+@\S+\.\S+/;
-        return re.test(email);
-    };
+    const validateEmail = (email: string) => /\S+@\S+\.\S+/.test(email);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-
-        if (!validateEmail(email)) {
-            setError('Please enter a valid email address');
-            return;
-        }
 
         if (!password) {
             setError('Please enter your password');
@@ -40,19 +32,21 @@ export default function Login(): JSX.Element {
         }
 
         try {
-            const response = await axios.post('/api/auth/login', { email, password });
+            const response = await axios.post('http://localhost:4200/api/auth/login', {
+                email,
+                password
+            });
             const { token } = response.data;
             const decoded: any = jwtDecode(token);
-
             localStorage.setItem('token', token);
             localStorage.setItem('role', decoded.role);
-
             setIsLoggedIn(true);
-        } catch (err) {
+        } catch {
             setError('Invalid email or password');
             setIsLoggedIn(false);
         }
     };
+
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>

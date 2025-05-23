@@ -1,15 +1,12 @@
-import React, {JSX} from "react";
-import {Layout, App as AntdApp, theme, message} from 'antd';
-import ScrollToTop from '../components/ScrollToTopButton';
-import Dashboard from "../components/Dashboard ";
+import React, {JSX} from 'react';
+import { App as AntdApp, ConfigProvider, Layout, message, ThemeConfig } from "antd";
+import { useLocation, useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
-import {Footer} from "../components/Footer";
-import {useNavigate, useLocation} from 'react-router-dom';
-import {ConfigProvider, ThemeConfig} from 'antd';
-import Containers from "../components/ContainerList";
+import ScrollToTop from "../components/ScrollToTopButton";
+import { Footer } from "../components/Footer";
+import HomeHeader from "../components/HomeHeader";
 
-
-const {Content} = Layout;
+const { Content } = Layout;
 
 const navItems = [
     { key: 'DashBoard Admin', label: 'DashBoard Admin', path: '/DashBoar-admin' },
@@ -22,7 +19,7 @@ const clearAuthData = () => {
     sessionStorage.removeItem('sessionToken');
 };
 
-export default function DashBoarAdmin(): JSX.Element {
+export default function HomePage(): JSX.Element {
     const navigate = useNavigate();
     const location = useLocation();
     const [messageApi, contextHolder] = message.useMessage();
@@ -30,8 +27,6 @@ export default function DashBoarAdmin(): JSX.Element {
     const handleNavigate = (key: string, path: string) => {
         navigate(path);
     };
-
-    const activeKey = location.pathname === '/' ? 'DashBoar Admin' : location.pathname.split('/')[1];
 
     const handleLogout = () => {
         try {
@@ -45,6 +40,8 @@ export default function DashBoarAdmin(): JSX.Element {
             console.error('Logout error:', error);
         }
     };
+
+    const activeKey = location.pathname === '/' ? 'home' : location.pathname.split('/')[1];
 
     const theme: ThemeConfig = {
         token: {
@@ -63,11 +60,11 @@ export default function DashBoarAdmin(): JSX.Element {
                         onNavigate={handleNavigate}
                         onLogout={handleLogout}
                     />
-                    <Content className="container mx-auto p-4">
-                        <Dashboard/>
+                    <Content >
+                        <HomeHeader />
                     </Content>
-                    <ScrollToTop/>
-                    <Footer/>
+                    <ScrollToTop />
+                    <Footer />
                 </Layout>
             </AntdApp>
         </ConfigProvider>
