@@ -22,7 +22,7 @@ const clearAuthData = () => {
     sessionStorage.removeItem('sessionToken');
 };
 
-export default function HomePage(): JSX.Element {
+export default function DashBoarAdmin(): JSX.Element {
     const navigate = useNavigate();
     const location = useLocation();
     const [messageApi, contextHolder] = message.useMessage();
@@ -39,6 +39,7 @@ export default function HomePage(): JSX.Element {
             messageApi.success('Logged out successfully');
             setTimeout(() => navigate('/signin'), 1000);
             localStorage.removeItem('token');
+            localStorage.removeItem('role');
         } catch (error) {
             messageApi.error('Logout failed. Please try again.');
             console.error('Logout error:', error);

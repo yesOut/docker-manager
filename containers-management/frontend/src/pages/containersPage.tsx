@@ -33,6 +33,8 @@ export default function ContainersPage(): JSX.Element {
             clearAuthData();
             messageApi.success('Logged out successfully');
             setTimeout(() => navigate('/signin'), 1000);
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
         } catch (error) {
             messageApi.error('Logout failed. Please try again.');
             console.error('Logout error:', error);

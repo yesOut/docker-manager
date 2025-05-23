@@ -2,11 +2,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 export const Footer: React.FC = () => {
+    const role = localStorage.getItem('role');
+    const isLoggedIn = !!localStorage.getItem('token');
+    
+    if (!isLoggedIn) return null;
+
     const navItems = [
-        { name: 'Dashboard Admin', path: '/' },
+        { name: 'Home', path: '/' },
         { name: 'Containers', path: '/containerlist' },
-        { name: 'Sign In', path: '/signin' },
-        { name: 'Sign Up', path: '/signup' }
+        ...(role === 'admin'
+            ? [{ name: 'Dashboard Admin', path: '/DashBoar-admin' }]
+            : [])
     ];
 
     return (

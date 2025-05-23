@@ -2,8 +2,9 @@ import React, { JSX, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { message } from 'antd';
+import { jwtDecode } from 'jwt-decode';
 
-export default function Signin(): JSX.Element {
+export default function Login(): JSX.Element {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -22,7 +23,6 @@ export default function Signin(): JSX.Element {
     const validateEmail = (email: string) => {
         const re = /\S+@\S+\.\S+/;
         return re.test(email);
-
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -40,13 +40,13 @@ export default function Signin(): JSX.Element {
         }
 
         try {
-            const response = await axios.post('/api/auth/login', {
-                email,
-                password
-            });
-
+            const response = await axios.post('/api/auth/login', { email, password });
             const { token } = response.data;
+            const decoded: any = jwtDecode(token);
+
             localStorage.setItem('token', token);
+            localStorage.setItem('role', decoded.role);
+
             setIsLoggedIn(true);
         } catch (err) {
             setError('Invalid email or password');

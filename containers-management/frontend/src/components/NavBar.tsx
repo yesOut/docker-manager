@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Layout, Menu, Typography, Space, Button } from 'antd';
-import { ContainerOutlined } from '@ant-design/icons';
+import { ContainerOutlined, HomeOutlined, DashboardOutlined } from '@ant-design/icons';
 import { NavigationProps } from '../types/navigation';
 
 const { Header } = Layout;
@@ -15,7 +15,6 @@ interface NavBarProps extends NavigationProps {
 }
 
 const NavBar: React.FC<NavBarProps> = ({
-                                           items,
                                            activeKey,
                                            onNavigate,
                                            onLogout,
@@ -25,10 +24,32 @@ const NavBar: React.FC<NavBarProps> = ({
                                            className = ''
                                        }) => {
     const [isLoggingOut, setIsLoggingOut] = React.useState(false);
-    const headerStyle: React.CSSProperties = {
-        background: 'white',
-        ...style,
-    };
+
+    const role = localStorage.getItem('role'); // Get the role from localStorage
+
+    // Define menu items based on role
+    const items = [
+        {
+            key: 'home',
+            label: 'Home',
+            icon: <HomeOutlined />,
+            path: '/home'
+        },
+        {
+            key: 'containers',
+            label: 'Containers',
+            icon: <ContainerOutlined />,
+            path: '/containerlist'
+        },
+        ...(role === 'admin'
+            ? [{
+                key: 'dashboard',
+                label: 'Dashboard',
+                icon: <DashboardOutlined />,
+                path: '/DashBoar-admin'
+            }]
+            : [])
+    ];
 
     const handleMenuClick = (e: { key: string }) => {
         const item = items.find(i => i.key === e.key);
@@ -49,7 +70,7 @@ const NavBar: React.FC<NavBarProps> = ({
     };
 
     return (
-        <Header style={headerStyle} className={className}>
+        <Header style={{ background: 'white', ...style }} className={className}>
             <div className="container mx-auto flex justify-between items-center">
                 <Space>
                     {logo}
@@ -77,7 +98,8 @@ const NavBar: React.FC<NavBarProps> = ({
                         <Button
                             type="primary"
                             danger
-                            onClick={onLogout}
+                            onClick={handleLogoutClick}
+                            loading={isLoggingOut}
                             className="ml-4"
                         >
                             Logout
