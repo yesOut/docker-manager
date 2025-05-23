@@ -42,11 +42,12 @@ export interface IDeviceRepository {
     delete(id: string): Promise<boolean>;
 
     /**
-     * Returns host‐machine CPU load & RAM usage.
+     * Returns host‑machine CPU load & RAM usage, including percentages.
      */
     getLocalStats(): Promise<{
-        cpu: { load: number; cores: number }[];
-        ram: { total: number; free: number; used: number };
+        cpu: { cores: number; load: number; usagePercent: number }[];
+        ram: { total: number; free: number; used: number; usagePercent: number };
+        usagePercentCpu: number
     }>;
 }
 
@@ -158,23 +159,67 @@ export class DeviceRepository implements IDeviceRepository {
     }
 
     /**
-     * Returns host-machine CPU load and RAM usage.
+     * Returns host‑machine CPU load and RAM usage with percentages.
      */
     async getLocalStats(): Promise<{
-        cpu: { load: number; cores: number }[];
-        ram: { total: number; free: number; used: number };
+        cpu: { cores: number; load: number; usagePercent: number }[];
+        ram: { total: number; free: number; used: number; usagePercent: number };
+        usagePercentCpu: number
     }> {
+        const getCpuUsage = (): Promise<number> => {
+            return new Promise((resolve) => {
+                const startMeasure = os.cpus();
+
+                setTimeout(() => {
+                    const endMeasure = os.cpus();
+                    let totalIdle = 0;
+                    let totalTick = 0;
+
+                    for (let i = 0; i < startMeasure.length; i++) {
+                        const startCpu = startMeasure[i];
+                        const endCpu = endMeasure[i];
+
+                        const startTotal = Object.values(startCpu.times).reduce((acc, time) => acc + time, 0);
+                        const endTotal = Object.values(endCpu.times).reduce((acc, time) => acc + time, 0);
+
+                        const idleDiff = endCpu.times.idle - startCpu.times.idle;
+                        const totalDiff = endTotal - startTotal;
+
+                        totalIdle += idleDiff;
+                        totalTick += totalDiff;
+                    }
+
+                    const idle = totalIdle / startMeasure.length;
+                    const total = totalTick / startMeasure.length;
+                    const usage = 100 - (100 * idle / total);
+
+                    resolve(Math.max(0, Math.min(100, usage)));
+                }, 100); // 100ms sampling interval
+            });
+        };
+        const cpuUsage = await getCpuUsage();
         const oneMinLoad = os.loadavg()[0];
         const cores = os.cpus().length;
-        const cpuArr = os.cpus().map(() => ({ load: oneMinLoad / cores, cores }));
+        const cpuArr = os.cpus().map(() => ({
+            cores,
+            load: oneMinLoad / cores,
+            usagePercent: Math.min((oneMinLoad / cores) * 100, 100)
+        }));
 
         const totalMem = os.totalmem();
         const freeMem = os.freemem();
         const usedMem = totalMem - freeMem;
+        const usagePercentRam = (usedMem / totalMem) * 100;
 
         return {
             cpu: cpuArr,
-            ram: { total: totalMem, free: freeMem, used: usedMem },
+            ram: {
+                total: totalMem,
+                free: freeMem,
+                used: usedMem,
+                usagePercent: Math.min(usagePercentRam, 100)
+            },
+            usagePercentCpu: cpuUsage,
         };
     }
 
