@@ -1,10 +1,12 @@
-import {useState} from 'react'
-import { Link } from 'react-router-dom';
+import React, {useState} from 'react'
+import {Link} from 'react-router-dom';
 
 import {Dialog, DialogPanel} from '@headlessui/react'
 import {Bars3Icon, XMarkIcon} from '@heroicons/react/24/outline'
 // @ts-ignore
 import logo from '../assets/images/logo_docker.png';
+import ContainersTable from "./ContainersTable";
+import UserTable from "./UserTable";
 
 const navigation = [
     {name: 'Product', href: '#'},
@@ -13,14 +15,44 @@ const navigation = [
     {name: 'Company', href: '#'},
 ]
 
+interface StatsCardProps {
+    title: string;
+    value: string;
+    icon: string;
+    color: string;
+}
+
+const StatsCard: React.FC<StatsCardProps> = ({title, value, icon, color}) => (
+    <div className={`p-4 rounded-lg shadow-sm ${color} text-white`}>
+        <div className="flex items-center justify-between">
+            <div>
+                <h3 className="text-sm font-medium">{title}</h3>
+                <p className="text-2xl font-bold mt-2">{value}</p>
+            </div>
+            <div className="text-3xl">{icon}</div>
+        </div>
+    </div>
+);
+
+
+interface NavigationItem {
+    name: string;
+    icon: string;
+    current: boolean;
+}
+
 export default function Example() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const navigation: NavigationItem[] = [
+        {name: 'CPU', icon: '🏾', current: false},
+        {name: 'Memory', icon: '💾', current: false},
+    ];
 
     return (
         <div className="bg-white">
             <div className="relative isolate px-4 lg:px-8">
                 <div className="flex items-center justify-center">
-                    <img src={logo} alt="Docker Logo" className="h-64 w-auto" />
+                    <img src={logo} alt="Docker Logo" className="h-64 w-auto"/>
                 </div>
                 <div className="mx-auto max-w-2xl ">
                     <div className="hidden sm:mb-8 sm:flex sm:justify-center">
@@ -68,7 +100,19 @@ export default function Example() {
                         className="relative left-[calc(50%+3rem)] aspect-1155/678 w-144.5 -translate-x-1/2 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-288.75"
                     />
                 </div>
-            </div>
+                <hr className="my-4 border-gray-200"/>
+                <div className="flex-1 p-8">
+                    <div className="flex justify-between items-center mb-8">
+                        <h1 className="text-2xl font-bold text-gray-800"> User Resources:</h1>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-8">
+                        <StatsCard title="CPU" value="---" icon="🏾️" color="bg-blue-400" />
+                        <StatsCard title="Memory" value="---" icon="💾" color="bg-blue-400" />
+                    </div>
+                </div>
+                </div>
+
         </div>
     )
 }
