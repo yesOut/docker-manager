@@ -2,6 +2,7 @@ import { Table, Button, Modal, Form, Input, Space, Popconfirm, message } from 'a
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
+// User interface
 interface User {
     id: string;
     firstName: string;
@@ -10,33 +11,30 @@ interface User {
     role: string;
 }
 
-export default function UserTable() {
-    const [users, setUsers] = useState<User[]>([]);
+// Props for the UserTable component
+interface UserTableProps {
+    users: User[];
+    setUsers: React.Dispatch<React.SetStateAction<User[]>>;
+    fetchUsers: () => void;
+}
+
+export default function UserTable({ users, setUsers, fetchUsers }: UserTableProps) {
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [form] = Form.useForm();
 
+    // Get Authorization headers from localStorage token
     const getAuthHeaders = () => {
         const token = localStorage.getItem('token');
         return { Authorization: `Bearer ${token}` };
     };
 
-    const fetchUsers = async () => {
-        try {
-            const res = await axios.get('/api/users', {
-                headers: getAuthHeaders(),
-            });
-            setUsers(res.data);
-        } catch (error) {
-            console.error(error);
-            message.error('Unauthorized or failed to fetch users');
-        }
-    };
-
+    // Fetch users on component mount
     useEffect(() => {
         fetchUsers();
-    }, []);
+    }, [fetchUsers]);
 
+    // Delete user by ID
     const handleDelete = async (id: string) => {
         try {
             await axios.delete(`/api/users/${id}`, {
@@ -49,34 +47,43 @@ export default function UserTable() {
         }
     };
 
+    // Open edit modal with user data
     const handleEdit = (user: User) => {
         setEditingUser(user);
         form.setFieldsValue(user);
         setModalVisible(true);
     };
 
+    // Open add user modal (empty form)
     const handleAdd = () => {
         setEditingUser(null);
         form.resetFields();
         setModalVisible(true);
     };
 
+    // Submit form for adding or editing a user
     const handleSubmit = async () => {
         try {
             const values = await form.validateFields();
             if (editingUser) {
+                // Update existing user
                 await axios.put(`/api/users/${editingUser.id}`, values, {
                     headers: getAuthHeaders(),
                 });
                 message.success('User updated');
             } else {
-                await axios.post('/api/auth/register', {
-                    ...values,
-                    confirmPassword: values.password,
-                    role: 'user',
-                }, {
-                    headers: getAuthHeaders(),
-                });
+                // Create new user
+                await axios.post(
+                    '/api/auth/register',
+                    {
+                        ...values,
+                        confirmPassword: values.password,
+                        role: 'user',
+                    },
+                    {
+                        headers: getAuthHeaders(),
+                    }
+                );
                 message.success('User added');
             }
             fetchUsers();
@@ -86,6 +93,7 @@ export default function UserTable() {
         }
     };
 
+    // Define columns for the Ant Design Table
     const columns = [
         { title: 'First Name', dataIndex: 'firstName' },
         { title: 'Last Name', dataIndex: 'lastName' },
@@ -110,10 +118,11 @@ export default function UserTable() {
     ];
 
     return (
-        <>
-            <Button type="primary" onClick={handleAdd} className="mb-4">
+        <div>
+            <Button type="primary" onClick={handleAdd} className="my-4">
                 Add User
             </Button>
+
             <Table rowKey="id" dataSource={users} columns={columns} />
 
             <Modal
@@ -132,6 +141,8 @@ export default function UserTable() {
                     <Form.Item name="email" label="Email" rules={[{ type: 'email', required: true }]}>
                         <Input />
                     </Form.Item>
+
+                    {/* Additional fields for adding a new user only */}
                     {!editingUser && (
                         <>
                             <Form.Item name="country" label="Country" rules={[{ required: true }]}>
@@ -146,24 +157,28 @@ export default function UserTable() {
                             <Form.Item name="password" label="Password" rules={[{ required: true, min: 8 }]}>
                                 <Input.Password />
                             </Form.Item>
-                            <Form.Item name="confirmPassword" label="Confirm Password" dependencies={['password']} rules={[
-                                { required: true },
-                                ({ getFieldValue }) => ({
-                                    validator(_, value) {
-                                        if (!value || getFieldValue('password') === value) {
-                                            return Promise.resolve();
-                                        }
-                                        return Promise.reject(new Error('Passwords do not match!'));
-                                    },
-                                }),
-                            ]}>
+                            <Form.Item
+                                name="confirmPassword"
+                                label="Confirm Password"
+                                dependencies={['password']}
+                                rules={[
+                                    { required: true },
+                                    ({ getFieldValue }) => ({
+                                        validator(_, value) {
+                                            if (!value || getFieldValue('password') === value) {
+                                                return Promise.resolve();
+                                            }
+                                            return Promise.reject(new Error('Passwords do not match!'));
+                                        },
+                                    }),
+                                ]}
+                            >
                                 <Input.Password />
                             </Form.Item>
                         </>
                     )}
                 </Form>
-
             </Modal>
-        </>
+        </div>
     );
 }
