@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import axios from 'axios';
 import ContainersTable from './ContainersTable';
 import UserTable from './UserTable';
+import {message} from "antd";
 
 interface StatsCardProps {
     title: string;
@@ -72,16 +73,17 @@ const DashboardAdmin: React.FC = () => {
         }
     };
 
-    const fetchUsers = async () => {
+    const fetchUsers = useCallback(async () => {
         try {
-            const response = await axios.get('api/users', {
+            const res = await axios.get('/api/users', {
                 headers: getAuthHeaders(),
             });
-            setUsers(response.data);
+            setUsers(res.data);
         } catch (error) {
-            console.error('Failed to fetch users', error);
+            console.error(error);
+            message.error('Unauthorized or failed to fetch users');
         }
-    };
+    }, [setUsers]);
 
     const fetchDeviceStats = async () => {
         try {
@@ -102,7 +104,7 @@ const DashboardAdmin: React.FC = () => {
         fetchContainers();
         fetchDeviceStats();
         fetchUsers();
-        const interval = setInterval(fetchDeviceStats, 2000);
+        const interval = setInterval(fetchDeviceStats, 1500);
         return () => clearInterval(interval);
     }, []);
 

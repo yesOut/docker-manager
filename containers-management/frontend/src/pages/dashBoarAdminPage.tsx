@@ -13,7 +13,7 @@ const {Content} = Layout;
 
 const navItems = [
     { key: 'DashBoard Admin', label: 'DashBoard Admin', path: '/DashBoar-admin' },
-    { key: 'containers', label: 'Containers', path: '/containerlist' }
+    { key: 'containers', label: 'Containers', path: '/containerlist' },
 ];
 
 const clearAuthData = () => {
