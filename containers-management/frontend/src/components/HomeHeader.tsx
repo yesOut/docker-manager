@@ -57,7 +57,7 @@ export default function Example() {
 
     useEffect(() => {
         fetchDeviceStats();
-        const interval = setInterval(fetchDeviceStats, 700);
+        const interval = setInterval(fetchDeviceStats, 1000);
         return () => clearInterval(interval);
     }, []);
 
