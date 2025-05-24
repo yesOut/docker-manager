@@ -15,7 +15,7 @@ export default function Login(): JSX.Element {
     useEffect(() => {
         if (isLoggedIn) {
             messageApi.success('Logged in successfully!', 1, () => {
-                navigate('/containerlist');
+                navigate('/home');
             });
         }
     }, [isLoggedIn, messageApi, navigate]);

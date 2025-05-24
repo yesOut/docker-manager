@@ -102,7 +102,7 @@ const DashboardAdmin: React.FC = () => {
         fetchContainers();
         fetchDeviceStats();
         fetchUsers();
-        const interval = setInterval(fetchDeviceStats, 2000);
+        const interval = setInterval(fetchDeviceStats, 3000);
         return () => clearInterval(interval);
     }, []);
 
@@ -132,9 +132,9 @@ const DashboardAdmin: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                         <StatsCard title="Docker Containers" value={String(containers.length)} icon="🐳" color="bg-green-500" />
+                        <StatsCard title="Total Users" value={String(users.length)} icon="👥" color="bg-blue-500" />
                         <StatsCard title="CPU" value={cpuUsage} icon="🏾️" color="bg-purple-500" />
                         <StatsCard title="Memory" value={memoryUsage} icon="💾" color="bg-orange-500" />
-                        <StatsCard title="Total Users" value={String(users.length)} icon="👥" color="bg-blue-500" />
                     </div>
 
                     <ContainersTable containers={containers} setContainers={setContainers} />
