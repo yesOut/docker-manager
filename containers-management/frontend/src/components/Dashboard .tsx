@@ -55,6 +55,8 @@ const DashboardAdmin: React.FC = () => {
 
     const [containers, setContainers] = useState<Container[]>([]);
     const [users, setUsers] = useState<User[]>([]);
+    const [cpuUsage, setCpuUsage] = useState<string>('---');
+    const [memoryUsage, setMemoryUsage] = useState<string>('---');
 
     const getAuthHeaders = () => {
         const token = localStorage.getItem('token');
@@ -72,7 +74,7 @@ const DashboardAdmin: React.FC = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await axios.get('/api/users', {
+            const response = await axios.get('api/users', {
                 headers: getAuthHeaders(),
             });
             setUsers(response.data);
@@ -81,9 +83,27 @@ const DashboardAdmin: React.FC = () => {
         }
     };
 
+    const fetchDeviceStats = async () => {
+        try {
+            const response = await axios.get('/api/device', {
+                headers: getAuthHeaders(),
+            });
+            const data = response.data?.data;
+            if (data) {
+                setCpuUsage(`${data.usagePercentCpu.toFixed(2)}%`);
+                setMemoryUsage(`${data.ram.usagePercent.toFixed(2)}%`);
+            }
+        } catch (error) {
+            console.error('Failed to fetch device stats', error);
+        }
+    };
+
     useEffect(() => {
         fetchContainers();
+        fetchDeviceStats();
         fetchUsers();
+        const interval = setInterval(fetchDeviceStats, 2000);
+        return () => clearInterval(interval);
     }, []);
 
     return (
@@ -111,17 +131,17 @@ const DashboardAdmin: React.FC = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <StatsCard title="Total Users" value={String(users.length)} icon="👥" color="bg-blue-500" />
                         <StatsCard title="Docker Containers" value={String(containers.length)} icon="🐳" color="bg-green-500" />
-                        <StatsCard title="CPU" value="---" icon="🏾️" color="bg-purple-500" />
-                        <StatsCard title="Memory" value="---" icon="💾" color="bg-orange-500" />
+                        <StatsCard title="CPU" value={cpuUsage} icon="🏾️" color="bg-purple-500" />
+                        <StatsCard title="Memory" value={memoryUsage} icon="💾" color="bg-orange-500" />
+                        <StatsCard title="Total Users" value={String(users.length)} icon="👥" color="bg-blue-500" />
                     </div>
 
                     <ContainersTable containers={containers} setContainers={setContainers} />
 
                     <div className="bg-white p-6 rounded-lg shadow-sm m-4">
                         <h2 className="text-xl font-semibold mb-4">Users</h2>
-                        <UserTable users={users} setUsers={setUsers} />
+                        <UserTable users={users} setUsers={setUsers} fetchUsers={fetchUsers} />
                     </div>
                 </div>
             </div>
