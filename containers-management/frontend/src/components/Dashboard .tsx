@@ -60,34 +60,66 @@ const DashboardAdmin: React.FC = () => {
 
     const getAuthHeaders = () => {
         const token = localStorage.getItem('token');
+        if (!token) {
+            console.error('No token found in localStorage');
+            return {};
+        }
         return { Authorization: `Bearer ${token}` };
     };
 
     const fetchContainers = async () => {
         try {
-            const response = await axios.get('/containers');
+            const response = await axios.get('/containers', {
+                headers: getAuthHeaders(),
+            });
+            console.log('Containers fetched:', response.data);
             setContainers(response.data);
         } catch (error) {
             console.error('Failed to fetch containers', error);
+            if (axios.isAxiosError(error) && error.response?.status === 401) {
+                console.error('Unauthorized: Check your token');
+            }
         }
     };
 
+    // Separated fetchUsers function - only called when needed
     const fetchUsers = async () => {
         try {
-            const response = await axios.get('api/users', {
-                headers: getAuthHeaders(),
+            const headers = getAuthHeaders();
+            if (!headers.Authorization) {
+                console.error('Cannot fetch users: No authorization token');
+                return;
+            }
+
+            const response = await axios.get('/api/users', {
+                headers,
             });
+            console.log('Users fetched:', response.data);
             setUsers(response.data);
         } catch (error) {
             console.error('Failed to fetch users', error);
+            if (axios.isAxiosError(error)) {
+                if (error.response?.status === 401) {
+                    console.error('Unauthorized: Token may be expired or invalid');
+                } else if (error.response?.status === 403) {
+                    console.error('Forbidden: Insufficient permissions');
+                }
+            }
         }
     };
 
     const fetchDeviceStats = async () => {
         try {
+            const headers = getAuthHeaders();
+            if (!headers.Authorization) {
+                console.error('Cannot fetch device stats: No authorization token');
+                return;
+            }
+
             const response = await axios.get('/api/device', {
-                headers: getAuthHeaders(),
+                headers,
             });
+            console.log('Device stats fetched:', response.data);
             const data = response.data?.data;
             if (data) {
                 setCpuUsage(`${data.usagePercentCpu.toFixed(2)}%`);
@@ -95,13 +127,27 @@ const DashboardAdmin: React.FC = () => {
             }
         } catch (error) {
             console.error('Failed to fetch device stats', error);
+            if (axios.isAxiosError(error) && error.response?.status === 401) {
+                console.error('Unauthorized: Check your token for device stats');
+            }
         }
     };
 
+    // Initial load effect - fetches containers, device stats, and users once
     useEffect(() => {
+        // Check if token exists before making any requests
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.error('No authentication token found. Please login.');
+            return;
+        }
+
+        console.log('Token found, fetching data...');
         fetchContainers();
         fetchDeviceStats();
-        fetchUsers();
+        fetchUsers(); // Fetch users only once on initial load
+
+        // Set up interval for device stats only
         const interval = setInterval(fetchDeviceStats, 3000);
         return () => clearInterval(interval);
     }, []);

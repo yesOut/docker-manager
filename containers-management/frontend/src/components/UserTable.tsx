@@ -1,5 +1,5 @@
 import { Table, Button, Modal, Form, Input, Space, Popconfirm, message } from 'antd';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 
 // User interface
@@ -26,24 +26,42 @@ export default function UserTable({ users, setUsers, fetchUsers }: UserTableProp
     // Get Authorization headers from localStorage token
     const getAuthHeaders = () => {
         const token = localStorage.getItem('token');
+        if (!token) {
+            console.error('No token found in localStorage');
+            message.error('Authentication token not found. Please login again.');
+            return {};
+        }
         return { Authorization: `Bearer ${token}` };
     };
 
-    // Fetch users on component mount
-    useEffect(() => {
-        fetchUsers();
-    }, [fetchUsers]);
-
-    // Delete user by ID
+    // Delete user by ID - calls fetchUsers after successful deletion
     const handleDelete = async (id: string) => {
         try {
+            const headers = getAuthHeaders();
+            if (!headers.Authorization) {
+                return;
+            }
+
             await axios.delete(`/api/users/${id}`, {
-                headers: getAuthHeaders(),
+                headers,
             });
-            message.success('User deleted');
-            fetchUsers();
-        } catch (err) {
-            message.error('Failed to delete user');
+            message.success('User deleted successfully');
+            fetchUsers(); // Refetch users after deletion
+        } catch (error) {
+            console.error('Failed to delete user:', error);
+            if (axios.isAxiosError(error)) {
+                if (error.response?.status === 401) {
+                    message.error('Unauthorized: Please login again');
+                } else if (error.response?.status === 403) {
+                    message.error('Forbidden: You do not have permission to delete users');
+                } else if (error.response?.status === 404) {
+                    message.error('User not found');
+                } else {
+                    message.error(`Failed to delete user: ${error.response?.data?.message || error.message}`);
+                }
+            } else {
+                message.error('Failed to delete user: Network error');
+            }
         }
     };
 
@@ -61,16 +79,22 @@ export default function UserTable({ users, setUsers, fetchUsers }: UserTableProp
         setModalVisible(true);
     };
 
-    // Submit form for adding or editing a user
+    // Submit form for adding or editing a user - calls fetchUsers after successful operation
     const handleSubmit = async () => {
         try {
+            const headers = getAuthHeaders();
+            if (!headers.Authorization) {
+                return;
+            }
+
             const values = await form.validateFields();
+
             if (editingUser) {
                 // Update existing user
                 await axios.put(`/api/users/${editingUser.id}`, values, {
-                    headers: getAuthHeaders(),
+                    headers,
                 });
-                message.success('User updated');
+                message.success('User updated successfully');
             } else {
                 // Create new user
                 await axios.post(
@@ -81,15 +105,30 @@ export default function UserTable({ users, setUsers, fetchUsers }: UserTableProp
                         role: 'user',
                     },
                     {
-                        headers: getAuthHeaders(),
+                        headers,
                     }
                 );
-                message.success('User added');
+                message.success('User added successfully');
             }
-            fetchUsers();
+            fetchUsers(); // Refetch users after add/update
             setModalVisible(false);
-        } catch (err) {
-            message.error('Failed to submit form');
+        } catch (error) {
+            console.error('Failed to submit form:', error);
+            if (axios.isAxiosError(error)) {
+                if (error.response?.status === 401) {
+                    message.error('Unauthorized: Please login again');
+                } else if (error.response?.status === 403) {
+                    message.error('Forbidden: You do not have permission to perform this action');
+                } else if (error.response?.status === 400) {
+                    message.error(`Bad request: ${error.response?.data?.message || 'Invalid data provided'}`);
+                } else if (error.response?.status === 409) {
+                    message.error('Conflict: User with this email already exists');
+                } else {
+                    message.error(`Failed to save user: ${error.response?.data?.message || error.message}`);
+                }
+            } else {
+                message.error('Failed to save user: Network error');
+            }
         }
     };
 
@@ -123,7 +162,15 @@ export default function UserTable({ users, setUsers, fetchUsers }: UserTableProp
                 Add User
             </Button>
 
-            <Table rowKey="id" dataSource={users} columns={columns} />
+            <Table
+                rowKey="id"
+                dataSource={users}
+                columns={columns}
+                loading={users.length === 0}
+                locale={{
+                    emptyText: users.length === 0 ? 'Loading users...' : 'No users found'
+                }}
+            />
 
             <Modal
                 title={editingUser ? 'Edit User' : 'Add User'}
