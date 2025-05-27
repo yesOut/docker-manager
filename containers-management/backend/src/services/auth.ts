@@ -77,8 +77,9 @@ export class AuthService {
     verifyToken(token: string): AuthPayload {
         try {
             return jwt.verify(token, this.jwtSecret) as AuthPayload;
-        } catch {
-            throw new Error('Invalid or expired token');
+        } catch(err) {
+            //@ts-ignore
+            throw new Error(err.message);
         }
     }
 
