@@ -270,7 +270,6 @@ export class ImageInspectController extends BaseController {
     }
 }
 
-// Single Responsibility: Handle image tagging operations
 export class ImageTagController extends BaseController {
     constructor(private imageTagRepo: IImageTagRepository) {
         super();

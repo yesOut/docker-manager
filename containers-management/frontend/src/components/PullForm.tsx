@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Form, Input, Button, message } from "antd";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import { Form, Input, Button, message } from 'antd';
+import axios from 'axios';
 
 interface PullFormProps {
     onSuccess?: () => void;
@@ -9,30 +9,35 @@ interface PullFormProps {
 
 const PullForm: React.FC<PullFormProps> = ({ onSuccess, onCancel }) => {
     const [loading, setLoading] = useState(false);
+    const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
     const onFinish = async (values: { image: string; tag?: string }) => {
         setLoading(true);
         try {
-            await axios.post("/api/pull", {
-                image: values.image,
-                tag: values.tag,
-            });
-            message.success("Image pulled successfully");
+            await axios.post('/api/pull', { image: values.image, tag: values.tag });
+            setFeedback({ type: 'success', text: 'Image pulled successfully' });
             onSuccess?.();
         } catch (error: any) {
-            message.error(error?.response?.data?.error || "Failed to pull image");
+            setFeedback({ type: 'error', text: error?.response?.data?.error || 'Failed to pull image' });
         } finally {
             setLoading(false);
         }
     };
 
+    useEffect(() => {
+        if (feedback) {
+            if (feedback.type === 'success') {
+                message.success(feedback.text);
+            } else {
+                message.error(feedback.text);
+            }
+            setFeedback(null);
+        }
+    }, [feedback]);
+
     return (
         <Form layout="vertical" onFinish={onFinish}>
-            <Form.Item
-                label="Image Name"
-                name="image"
-                rules={[{ required: true, message: "Please enter the image name" }]}
-            >
+            <Form.Item label="Image Name" name="image" rules={[{ required: true, message: 'Please enter the image name' }]}>
                 <Input placeholder="e.g. nginx" />
             </Form.Item>
             <Form.Item label="Tag" name="tag">

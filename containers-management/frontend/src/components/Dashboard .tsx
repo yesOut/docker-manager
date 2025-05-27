@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ContainersTable from './ContainersTable';
+import ImagesTable from './ImagesTable';
 import UserTable from './UserTable';
 
 interface StatsCardProps {
@@ -36,6 +37,16 @@ interface Container {
     status: string;
 }
 
+interface DockerImage {
+    Id: string;
+    RepoTags: string[];
+    Size: number;
+    Created: number;
+    id?: string;
+    image?: string;
+    tag?: string;
+}
+
 interface User {
     id: string;
     firstName: string;
@@ -49,11 +60,13 @@ const DashboardAdmin: React.FC = () => {
         { name: 'Dashboard', icon: '📊', current: true },
         { name: 'Users', icon: '👤', current: false },
         { name: 'Docker Containers', icon: '🐳', current: false },
+        { name: 'Docker Images', icon: '🖼️', current: false },
         { name: 'CPU', icon: '🏾', current: false },
         { name: 'Memory', icon: '💾', current: false },
     ];
 
     const [containers, setContainers] = useState<Container[]>([]);
+    const [images, setImages] = useState<DockerImage[]>([]);
     const [users, setUsers] = useState<User[]>([]);
     const [cpuUsage, setCpuUsage] = useState<string>('---');
     const [memoryUsage, setMemoryUsage] = useState<string>('---');
@@ -81,7 +94,20 @@ const DashboardAdmin: React.FC = () => {
         }
     };
 
-    // Separated fetchUsers function - only called when needed
+    const fetchImages = async () => {
+        try {
+            const response = await axios.get('/api/images', {
+                headers: getAuthHeaders(),
+            });
+            setImages(response.data.data || response.data);
+        } catch (error) {
+            console.error('Failed to fetch images', error);
+            if (axios.isAxiosError(error) && error.response?.status === 401) {
+                console.error('Unauthorized: Check your token');
+            }
+        }
+    };
+
     const fetchUsers = async () => {
         try {
             const headers = getAuthHeaders();
@@ -137,6 +163,7 @@ const DashboardAdmin: React.FC = () => {
             return;
         }
         fetchContainers();
+        fetchImages();
         fetchDeviceStats();
         fetchUsers();
         const interval = setInterval(fetchDeviceStats, 3000);
@@ -167,18 +194,23 @@ const DashboardAdmin: React.FC = () => {
                         <h1 className="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
                         <StatsCard title="Docker Containers" value={String(containers.length)} icon="🐳" color="bg-green-500" />
+                        <StatsCard title="Docker Images" value={String(images.length)} icon="🖼️" color="bg-indigo-500" />
                         <StatsCard title="Total Users" value={String(users.length)} icon="👥" color="bg-blue-500" />
                         <StatsCard title="CPU" value={cpuUsage} icon="🏾️" color="bg-purple-500" />
                         <StatsCard title="Memory" value={memoryUsage} icon="💾" color="bg-orange-500" />
                     </div>
 
-                    <ContainersTable containers={containers} setContainers={setContainers} />
+                    <div className="space-y-6">
+                        <ContainersTable containers={containers} setContainers={setContainers} />
 
-                    <div className="bg-white p-6 rounded-lg shadow-sm m-4">
-                        <h2 className="text-xl font-semibold mb-4">Users</h2>
-                        <UserTable users={users} setUsers={setUsers} fetchUsers={fetchUsers} />
+                        <ImagesTable images={images} setImages={setImages} fetchImages={fetchImages} />
+
+                        <div className="bg-white p-6 rounded-lg shadow-sm">
+                            <h2 className="text-xl font-semibold mb-4">Users</h2>
+                            <UserTable users={users} setUsers={setUsers} fetchUsers={fetchUsers} />
+                        </div>
                     </div>
                 </div>
             </div>

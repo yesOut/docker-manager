@@ -10,7 +10,6 @@ import DashBoarAdminPage from './pages/dashBoarAdminPage';
 import HomePage from './pages/homePage';
 import NotFound from './components/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
-import { Footer } from './components/Footer';
 import './assets/output.css';
 
 const { Content } = Layout;

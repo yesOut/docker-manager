@@ -1,8 +1,7 @@
-import { Table, Button, Modal, Form, Input, Space, Popconfirm, message } from 'antd';
+import { Table, Button, Modal, Form, Input, Space, Popconfirm, message, Select } from 'antd';
 import { useState } from 'react';
 import axios from 'axios';
 
-// User interface
 interface User {
     id: string;
     firstName: string;
@@ -11,7 +10,6 @@ interface User {
     role: string;
 }
 
-// Props for the UserTable component
 interface UserTableProps {
     users: User[];
     setUsers: React.Dispatch<React.SetStateAction<User[]>>;
@@ -23,7 +21,11 @@ export default function UserTable({ users, setUsers, fetchUsers }: UserTableProp
     const [modalVisible, setModalVisible] = useState(false);
     const [form] = Form.useForm();
 
-    // Get Authorization headers from localStorage token
+    const roleOptions = [
+        { value: 'user', label: 'User' },
+        { value: 'admin', label: 'Admin' },
+    ];
+
     const getAuthHeaders = () => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -34,7 +36,6 @@ export default function UserTable({ users, setUsers, fetchUsers }: UserTableProp
         return { Authorization: `Bearer ${token}` };
     };
 
-    // Delete user by ID - calls fetchUsers after successful deletion
     const handleDelete = async (id: string) => {
         try {
             const headers = getAuthHeaders();
@@ -46,7 +47,7 @@ export default function UserTable({ users, setUsers, fetchUsers }: UserTableProp
                 headers,
             });
             message.success('User deleted successfully');
-            fetchUsers(); // Refetch users after deletion
+            fetchUsers();
         } catch (error) {
             console.error('Failed to delete user:', error);
             if (axios.isAxiosError(error)) {
@@ -65,21 +66,19 @@ export default function UserTable({ users, setUsers, fetchUsers }: UserTableProp
         }
     };
 
-    // Open edit modal with user data
     const handleEdit = (user: User) => {
         setEditingUser(user);
         form.setFieldsValue(user);
         setModalVisible(true);
     };
 
-    // Open add user modal (empty form)
     const handleAdd = () => {
         setEditingUser(null);
         form.resetFields();
+        form.setFieldsValue({ role: 'user' });
         setModalVisible(true);
     };
 
-    // Submit form for adding or editing a user - calls fetchUsers after successful operation
     const handleSubmit = async () => {
         try {
             const headers = getAuthHeaders();
@@ -90,19 +89,16 @@ export default function UserTable({ users, setUsers, fetchUsers }: UserTableProp
             const values = await form.validateFields();
 
             if (editingUser) {
-                // Update existing user
                 await axios.put(`/api/users/${editingUser.id}`, values, {
                     headers,
                 });
                 message.success('User updated successfully');
             } else {
-                // Create new user
                 await axios.post(
                     '/api/auth/register',
                     {
                         ...values,
                         confirmPassword: values.password,
-                        role: 'user',
                     },
                     {
                         headers,
@@ -110,7 +106,7 @@ export default function UserTable({ users, setUsers, fetchUsers }: UserTableProp
                 );
                 message.success('User added successfully');
             }
-            fetchUsers(); // Refetch users after add/update
+            fetchUsers();
             setModalVisible(false);
         } catch (error) {
             console.error('Failed to submit form:', error);
@@ -132,7 +128,6 @@ export default function UserTable({ users, setUsers, fetchUsers }: UserTableProp
         }
     };
 
-    // Define columns for the Ant Design Table
     const columns = [
         { title: 'First Name', dataIndex: 'firstName' },
         { title: 'Last Name', dataIndex: 'lastName' },
@@ -189,7 +184,14 @@ export default function UserTable({ users, setUsers, fetchUsers }: UserTableProp
                         <Input />
                     </Form.Item>
 
-                    {/* Additional fields for adding a new user only */}
+                    <Form.Item name="role" label="Role" rules={[{ required: true }]}>
+                        <Select
+                            placeholder="Select a role"
+                            options={roleOptions}
+                            allowClear={false}
+                        />
+                    </Form.Item>
+
                     {!editingUser && (
                         <>
                             <Form.Item name="country" label="Country" rules={[{ required: true }]}>
